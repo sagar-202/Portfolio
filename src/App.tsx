@@ -1,9 +1,26 @@
+/**
+ * SAGAR.DB — App Root
+ *
+ * Phase 2: BrowserRouter + QueryProvider + Routes.
+ * Init sequence preserved from Phase 1.
+ * QueryProvider must be inside BrowserRouter (useNavigate requires it).
+ */
+
 import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+
+import { QueryProvider } from './context/QueryContext';
 import { Home } from './pages/Home';
+import { MePage } from './pages/MePage';
+import { ProjectsPage } from './pages/ProjectsPage';
+import { SkillsPage } from './pages/SkillsPage';
+import { ContactPage } from './pages/ContactPage';
+
 import './index.css';
 
-/** Init sequence lines shown during the loading screen */
+// ─── Init Sequence ────────────────────────────────────────────────────────────
+
 interface InitLine {
   text: string;
   color: string;
@@ -20,28 +37,21 @@ const INIT_LINES: InitLine[] = [
 
 const TOTAL_INIT_MS = 1300;
 
-// Detect reduced motion preference
 const prefersReducedMotion =
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/**
- * InitScreen — shown for ~1.3s on first load.
- * Skipped entirely if prefers-reduced-motion is set.
- */
 function InitScreen() {
   const [visibleLines, setVisibleLines] = useState<number[]>([]);
 
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
-
     INIT_LINES.forEach((line, i) => {
       const t = setTimeout(() => {
         setVisibleLines((prev) => [...prev, i]);
       }, line.delay);
       timers.push(t);
     });
-
     return () => timers.forEach(clearTimeout);
   }, []);
 
@@ -68,7 +78,6 @@ function InitScreen() {
           padding: '0 24px',
         }}
       >
-        {/* Logo */}
         <div
           style={{
             fontFamily: "'JetBrains Mono', monospace",
@@ -82,8 +91,6 @@ function InitScreen() {
         >
           SAGAR.DB
         </div>
-
-        {/* Init lines */}
         {INIT_LINES.map((line, i) => (
           <motion.div
             key={i}
@@ -106,26 +113,43 @@ function InitScreen() {
   );
 }
 
+// ─── Router Content ───────────────────────────────────────────────────────────
+
 /**
- * App — root component.
- * Shows InitScreen for TOTAL_INIT_MS, then fades in Home.
- * If prefers-reduced-motion, skips straight to Home.
+ * AppRoutes — rendered inside BrowserRouter + QueryProvider.
+ * QueryProvider must be here (not outside BrowserRouter) because
+ * useQuery calls useNavigate which needs the Router context.
  */
+function AppRoutes() {
+  return (
+    <QueryProvider>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/me" element={<MePage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/projects/:id" element={<ProjectsPage />} />
+        <Route path="/skills" element={<SkillsPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        {/* Fallback — redirect unknown routes to home */}
+        <Route path="*" element={<Home />} />
+      </Routes>
+    </QueryProvider>
+  );
+}
+
+// ─── App Root ─────────────────────────────────────────────────────────────────
+
 function App() {
   const [showInit, setShowInit] = useState(!prefersReducedMotion);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
-
-    const t = setTimeout(() => {
-      setShowInit(false);
-    }, TOTAL_INIT_MS);
-
+    const t = setTimeout(() => setShowInit(false), TOTAL_INIT_MS);
     return () => clearTimeout(t);
   }, []);
 
   return (
-    <>
+    <BrowserRouter>
       <AnimatePresence mode="wait">
         {showInit ? (
           <motion.div
@@ -137,16 +161,16 @@ function App() {
           </motion.div>
         ) : (
           <motion.div
-            key="home"
+            key="app"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.35, ease: 'easeOut' }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
           >
-            <Home />
+            <AppRoutes />
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </BrowserRouter>
   );
 }
 

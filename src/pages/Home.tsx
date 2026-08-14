@@ -1,3 +1,10 @@
+/**
+ * Home — Phase 2
+ * Query display at top reads from QueryContext.
+ * All layout and visual design unchanged from Phase 1.
+ */
+
+import { useEffect } from 'react';
 import { motion, type Easing } from 'framer-motion';
 import { PageShell } from '../components/PageShell';
 import { QueryDisplay } from '../components/QueryDisplay';
@@ -5,6 +12,8 @@ import { QueryExecution } from '../components/QueryExecution';
 import { QueryNavigation } from '../components/QueryNavigation';
 import { QueryResult } from '../components/QueryResult';
 import { profile } from '../data/profile';
+import { useQueryContext } from '../context/QueryContext';
+import { COMMANDS } from '../query/commands';
 
 // Respect prefers-reduced-motion
 const prefersReducedMotion =
@@ -26,12 +35,25 @@ const stagger = (delay: number) =>
     ? {}
     : { duration: 0.35, ease: EASE_OUT, delay };
 
-/**
- * Home — Phase 1 homepage
- * Two-column layout on desktop: left hero + right query panel.
- * Stacked on mobile.
- */
 export function Home() {
+  const { setActiveCommand, state } = useQueryContext();
+
+  // Mark HOME as the active command on mount
+  useEffect(() => {
+    setActiveCommand('HOME');
+  }, [setActiveCommand]);
+
+  // Determine which query to show at top
+  // During navigation from this page, show the executing command's query
+  const activeCmd = state.activeCommandId ? COMMANDS[state.activeCommandId] : null;
+  const displayQuery =
+    (state.status === 'executing' || state.status === 'success') && activeCmd?.query
+      ? activeCmd.query
+      : profile.queries.home;
+
+  const showSuccess =
+    state.status === 'success' && state.activeCommandId !== null;
+
   return (
     <PageShell>
       {/* Responsive two-column grid */}
@@ -54,7 +76,7 @@ export function Home() {
             transition={{ ...fadeInUp.transition, delay: 0 }}
             style={{ marginBottom: '4px' }}
           >
-            <QueryDisplay query={profile.queries.home} />
+            <QueryDisplay query={displayQuery} />
           </motion.div>
 
           <motion.div
@@ -63,10 +85,18 @@ export function Home() {
             transition={stagger(0.08)}
             style={{ marginBottom: '32px' }}
           >
-            <QueryExecution />
+            {showSuccess && activeCmd ? (
+              <QueryExecution
+                rowCount={activeCmd.successMessage.split('/')[1]?.trim()
+                  ? `/ ${activeCmd.successMessage.split('/')[1].trim()}`
+                  : undefined}
+              />
+            ) : (
+              <QueryExecution />
+            )}
           </motion.div>
 
-          {/* Record metadata — RECORD / 001 — INTRODUCTION */}
+          {/* Record metadata */}
           <motion.div
             initial={fadeInUp.initial}
             animate={fadeInUp.animate}
