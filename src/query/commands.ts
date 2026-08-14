@@ -58,9 +58,9 @@ export const COMMANDS: Record<CommandId, Command> = {
   },
   CONTACT: {
     id: 'CONTACT',
-    query: 'SELECT contact FROM sagar;',
+    query: 'SELECT * FROM contact;',
     route: '/contact',
-    successMessage: '✓ Query executed successfully. / 001 record',
+    successMessage: '✓ Query executed successfully. / 001 row',
     description: 'Open contact record',
   },
   HELP: {
