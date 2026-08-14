@@ -1,12 +1,10 @@
 /**
- * ContactCard — Database-style contact record card for SAGAR.DB.
- * Matches SAGAR.DB design system with near-black bg, thin borders,
- * JetBrains Mono query tags, and green accent on selection.
+ * ContactCard — SAGAR.DB contact card.
+ * Content-first hierarchy with subtle SQL metadata tag.
  */
 
 import { ExternalLink } from 'lucide-react';
 import type { ContactCardData } from '../data/contact';
-import { QueryDisplay } from './QueryDisplay';
 
 interface ContactCardProps {
   card: ContactCardData;
@@ -40,7 +38,7 @@ export function ContactCard({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        padding: '16px 18px',
+        padding: '18px 20px',
         border: isActive
           ? '1px solid #5EE6A8'
           : isExecuting && isSelected
@@ -48,12 +46,12 @@ export function ContactCard({
           : '1px solid #252A30',
         borderRadius: '6px',
         backgroundColor: isActive
-          ? '#17382A'
+          ? '#142E22'
           : isExecuting && isSelected
           ? '#0F1F18'
           : '#111418',
         cursor: isExecuting ? 'wait' : 'pointer',
-        transition: 'border-color 0.18s ease, background-color 0.18s ease',
+        transition: 'all 0.18s ease',
         outline: 'none',
       }}
       onFocus={(e) => {
@@ -66,7 +64,7 @@ export function ContactCard({
       onMouseEnter={(e) => {
         if (isSelected) return;
         (e.currentTarget as HTMLDivElement).style.borderColor = '#3D444B';
-        (e.currentTarget as HTMLDivElement).style.backgroundColor = '#141920';
+        (e.currentTarget as HTMLDivElement).style.backgroundColor = '#151A21';
       }}
       onMouseLeave={(e) => {
         if (isSelected) return;
@@ -75,12 +73,16 @@ export function ContactCard({
       }}
     >
       <div>
-        {/* SQL query tag */}
-        <div style={{ marginBottom: '8px' }}>
-          <QueryDisplay
-            query={card.query}
-            className="text-xs opacity-80"
-          />
+        {/* Subtle SQL query tag (Level 4 element) */}
+        <div
+          style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '10px',
+            color: '#626A73',
+            marginBottom: '8px',
+          }}
+        >
+          <span style={{ color: '#3D444B' }}>&gt;</span> {card.query}
         </div>
 
         {/* Card Type Header */}
@@ -98,15 +100,15 @@ export function ContactCard({
           {card.label}
         </div>
 
-        {/* Card Value */}
+        {/* Card Value (Primary Content) */}
         <div
           style={{
             fontFamily: "'Inter', sans-serif",
-            fontSize: '14px',
-            fontWeight: 600,
+            fontSize: '15px',
+            fontWeight: 700,
             color: '#F2F4F5',
             margin: 0,
-            marginBottom: '14px',
+            marginBottom: '16px',
             wordBreak: 'break-all',
           }}
         >
@@ -115,7 +117,12 @@ export function ContactCard({
       </div>
 
       {/* Direct Action Link */}
-      <div>
+      <div
+        style={{
+          paddingTop: '12px',
+          borderTop: '1px solid #1C2128',
+        }}
+      >
         <a
           href={card.href}
           target={card.isExternal ? '_blank' : undefined}
@@ -126,7 +133,7 @@ export function ContactCard({
           }}
           style={{
             fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '10px',
+            fontSize: '11px',
             fontWeight: 600,
             letterSpacing: '0.08em',
             color: isActive ? '#5EE6A8' : '#9AA2AA',

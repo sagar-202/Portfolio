@@ -1,11 +1,9 @@
 /**
- * SkillCard — Database-style skill record card for SAGAR.DB.
- * Matches SAGAR.DB design system with near-black bg, thin borders,
- * JetBrains Mono query tags, and green accent on selection.
+ * SkillCard — SAGAR.DB skill card.
+ * Content-first hierarchy with subtle SQL metadata tag.
  */
 
 import type { Skill } from '../data/skills';
-import { QueryDisplay } from './QueryDisplay';
 
 interface SkillCardProps {
   skill: Skill;
@@ -39,7 +37,7 @@ export function SkillCard({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        padding: '16px 18px',
+        padding: '18px 20px',
         border: isActive
           ? '1px solid #5EE6A8'
           : isExecuting && isSelected
@@ -47,12 +45,12 @@ export function SkillCard({
           : '1px solid #252A30',
         borderRadius: '6px',
         backgroundColor: isActive
-          ? '#17382A'
+          ? '#142E22'
           : isExecuting && isSelected
           ? '#0F1F18'
           : '#111418',
         cursor: isExecuting ? 'wait' : 'pointer',
-        transition: 'border-color 0.18s ease, background-color 0.18s ease',
+        transition: 'all 0.18s ease',
         outline: 'none',
       }}
       onFocus={(e) => {
@@ -65,7 +63,7 @@ export function SkillCard({
       onMouseEnter={(e) => {
         if (isSelected) return;
         (e.currentTarget as HTMLDivElement).style.borderColor = '#3D444B';
-        (e.currentTarget as HTMLDivElement).style.backgroundColor = '#141920';
+        (e.currentTarget as HTMLDivElement).style.backgroundColor = '#151A21';
       }}
       onMouseLeave={(e) => {
         if (isSelected) return;
@@ -74,24 +72,28 @@ export function SkillCard({
       }}
     >
       <div>
-        {/* SQL Query tag */}
-        <div style={{ marginBottom: '8px' }}>
-          <QueryDisplay
-            query={`SELECT usage FROM ${skill.id};`}
-            className="text-xs opacity-80"
-          />
+        {/* Subtle SQL Query Tag (Level 4 element) */}
+        <div
+          style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '10px',
+            color: '#626A73',
+            marginBottom: '8px',
+          }}
+        >
+          <span style={{ color: '#3D444B' }}>&gt;</span> SELECT usage FROM {skill.id};
         </div>
 
-        {/* Skill Name */}
+        {/* Skill Name (Level 1 Content) */}
         <h3
           style={{
             fontFamily: "'Inter', sans-serif",
-            fontSize: '15px',
-            fontWeight: 700,
+            fontSize: '17px',
+            fontWeight: 800,
             color: '#F2F4F5',
             margin: 0,
             marginBottom: '4px',
-            lineHeight: 1.3,
+            lineHeight: 1.25,
             textTransform: 'uppercase',
             letterSpacing: '-0.01em',
           }}
@@ -99,12 +101,11 @@ export function SkillCard({
           {skill.name}
         </h3>
 
-        {/* Category & Level tag */}
+        {/* Category & Proficiency Level */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
             gap: '8px',
             marginBottom: '10px',
           }}
@@ -114,26 +115,25 @@ export function SkillCard({
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: '10px',
               fontWeight: 600,
-              letterSpacing: '0.12em',
+              letterSpacing: '0.1em',
               color: '#5EE6A8',
               textTransform: 'uppercase',
             }}
           >
             {skill.category}
           </span>
+          <span style={{ color: '#252A30', fontSize: '10px' }} aria-hidden="true">
+            •
+          </span>
           <span
             style={{
               fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '9px',
+              fontSize: '10px',
               fontWeight: 500,
-              color: '#626A73',
-              border: '1px solid #252A30',
-              padding: '1px 6px',
-              borderRadius: '3px',
-              textTransform: 'uppercase',
+              color: '#9AA2AA',
             }}
           >
-            {skill.level}
+            {skill.level === 'WORKING' ? 'Working' : skill.level === 'FOUNDATIONAL' ? 'Foundational' : 'Familiar'}
           </span>
         </div>
 
@@ -141,20 +141,52 @@ export function SkillCard({
         <p
           style={{
             fontFamily: "'Inter', sans-serif",
-            fontSize: '12px',
+            fontSize: '13px',
             fontWeight: 400,
             color: '#9AA2AA',
             margin: 0,
             lineHeight: 1.55,
-            marginBottom: '16px',
+            marginBottom: '14px',
           }}
         >
           {skill.description}
         </p>
+
+        {/* Related projects preview */}
+        {skill.relatedProjects.length > 0 && (
+          <div style={{ marginBottom: '16px' }}>
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '10px',
+                color: '#626A73',
+                marginBottom: '4px',
+                textTransform: 'uppercase',
+              }}
+            >
+              Related projects:
+            </div>
+            <div
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '12px',
+                color: isActive ? '#5EE6A8' : '#626A73',
+                lineHeight: 1.4,
+              }}
+            >
+              {skill.relatedProjects.join(' • ')}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Action button */}
-      <div>
+      <div
+        style={{
+          paddingTop: '12px',
+          borderTop: '1px solid #1C2128',
+        }}
+      >
         <button
           type="button"
           tabIndex={-1}
@@ -163,14 +195,11 @@ export function SkillCard({
             fontSize: '10px',
             fontWeight: 600,
             letterSpacing: '0.08em',
-            color: isActive ? '#5EE6A8' : '#626A73',
+            color: isActive ? '#5EE6A8' : '#9AA2AA',
             backgroundColor: 'transparent',
             border: 'none',
             padding: 0,
             cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px',
           }}
         >
           [ VIEW RECORD ]

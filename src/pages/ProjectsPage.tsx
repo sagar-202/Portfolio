@@ -168,7 +168,7 @@ export function ProjectsPage() {
               marginBottom: '14px',
             }}
           >
-            Projects, queried.
+            Projects, built.
           </motion.h1>
 
           {/* Subtitle */}

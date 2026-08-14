@@ -48,7 +48,7 @@ export const contactCards: ContactCardData[] = [
     label: 'EMAIL',
     value: 'sagarpatgar@gmail.com',
     href: 'mailto:sagarpatgar@gmail.com',
-    actionLabel: '[ OPEN RECORD ]',
+    actionLabel: '[ EMAIL ME ]',
     query: 'SELECT email FROM contact;',
     resultHeading: 'EMAIL',
     resultDetails: [
@@ -63,7 +63,7 @@ export const contactCards: ContactCardData[] = [
     label: 'LINKEDIN',
     value: 'linkedin.com/in/sagar-patgar',
     href: 'https://linkedin.com/in/sagar-patgar',
-    actionLabel: '[ OPEN RECORD ]',
+    actionLabel: '[ OPEN LINKEDIN ]',
     query: 'SELECT linkedin FROM contact;',
     resultHeading: 'LINKEDIN',
     resultDetails: [
@@ -79,7 +79,7 @@ export const contactCards: ContactCardData[] = [
     label: 'GITHUB',
     value: 'github.com/sagar-202',
     href: 'https://github.com/sagar-202',
-    actionLabel: '[ OPEN RECORD ]',
+    actionLabel: '[ OPEN GITHUB ]',
     query: 'SELECT github FROM contact;',
     resultHeading: 'GITHUB',
     resultDetails: [

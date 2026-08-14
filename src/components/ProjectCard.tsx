@@ -1,11 +1,10 @@
 /**
- * ProjectCard — Database-style project record card for SAGAR.DB.
- * Matches SAGAR.DB design system with near-black bg, thin borders,
- * JetBrains Mono query tags, and green accent on selection.
+ * ProjectCard — SAGAR.DB project card.
+ * Content-first hierarchy with subtle SQL metadata tag.
  */
 
+import { ExternalLink } from 'lucide-react';
 import type { Project } from '../data/projects';
-import { QueryDisplay } from './QueryDisplay';
 
 interface ProjectCardProps {
   project: Project;
@@ -28,7 +27,7 @@ export function ProjectCard({
       role="button"
       tabIndex={0}
       aria-pressed={isSelected}
-      aria-label={`View record for ${project.name}`}
+      aria-label={`View project details for ${project.name}`}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -39,7 +38,7 @@ export function ProjectCard({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        padding: '18px 20px',
+        padding: '22px 22px',
         border: isActive
           ? '1px solid #5EE6A8'
           : isExecuting && isSelected
@@ -47,12 +46,12 @@ export function ProjectCard({
           : '1px solid #252A30',
         borderRadius: '6px',
         backgroundColor: isActive
-          ? '#17382A'
+          ? '#142E22'
           : isExecuting && isSelected
           ? '#0F1F18'
           : '#111418',
         cursor: isExecuting ? 'wait' : 'pointer',
-        transition: 'border-color 0.18s ease, background-color 0.18s ease',
+        transition: 'all 0.18s ease',
         outline: 'none',
       }}
       onFocus={(e) => {
@@ -65,7 +64,7 @@ export function ProjectCard({
       onMouseEnter={(e) => {
         if (isSelected) return;
         (e.currentTarget as HTMLDivElement).style.borderColor = '#3D444B';
-        (e.currentTarget as HTMLDivElement).style.backgroundColor = '#141920';
+        (e.currentTarget as HTMLDivElement).style.backgroundColor = '#151A21';
       }}
       onMouseLeave={(e) => {
         if (isSelected) return;
@@ -74,31 +73,36 @@ export function ProjectCard({
       }}
     >
       <div>
-        {/* SQL Query Identifier */}
-        <div style={{ marginBottom: '10px' }}>
-          <QueryDisplay
-            query={`SELECT project FROM projects WHERE id = '${project.id}';`}
-            className="text-xs opacity-80"
-          />
+        {/* Subtle SQL query tag (Level 4 element) */}
+        <div
+          style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '10px',
+            color: '#626A73',
+            marginBottom: '10px',
+            lineHeight: 1.4,
+          }}
+        >
+          <span style={{ color: '#3D444B' }}>&gt;</span> SELECT project FROM projects WHERE id = '{project.id}';
         </div>
 
-        {/* Project Name */}
+        {/* Primary Project Name (Level 1 Content) */}
         <h3
           style={{
             fontFamily: "'Inter', sans-serif",
-            fontSize: '16px',
-            fontWeight: 700,
+            fontSize: '18px',
+            fontWeight: 800,
             color: '#F2F4F5',
             margin: 0,
-            marginBottom: '4px',
-            lineHeight: 1.3,
-            letterSpacing: '-0.01em',
+            marginBottom: '6px',
+            lineHeight: 1.25,
+            letterSpacing: '-0.02em',
           }}
         >
           {project.name}
         </h3>
 
-        {/* Category */}
+        {/* Category Badge */}
         <div
           style={{
             fontFamily: "'JetBrains Mono', monospace",
@@ -106,58 +110,18 @@ export function ProjectCard({
             fontWeight: 600,
             letterSpacing: '0.12em',
             color: '#5EE6A8',
-            marginBottom: '12px',
+            marginBottom: '14px',
             textTransform: 'uppercase',
           }}
         >
           {project.category}
         </div>
 
-        {/* Technology tags */}
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '6px',
-            marginBottom: '14px',
-          }}
-        >
-          {project.technologies.slice(0, 4).map((tech) => (
-            <span
-              key={tech}
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '10px',
-                fontWeight: 500,
-                color: isActive ? '#9AA2AA' : '#626A73',
-                backgroundColor: isActive ? '#0F261C' : '#0B0D0F',
-                border: '1px solid #252A30',
-                padding: '2px 8px',
-                borderRadius: '3px',
-              }}
-            >
-              [ {tech} ]
-            </span>
-          ))}
-          {project.technologies.length > 4 && (
-            <span
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '10px',
-                color: '#626A73',
-                alignSelf: 'center',
-              }}
-            >
-              +{project.technologies.length - 4} more
-            </span>
-          )}
-        </div>
-
-        {/* Short Description */}
+        {/* Project Description (Primary Content) */}
         <p
           style={{
             fontFamily: "'Inter', sans-serif",
-            fontSize: '13px',
+            fontSize: '14px',
             fontWeight: 400,
             color: '#9AA2AA',
             margin: 0,
@@ -165,32 +129,101 @@ export function ProjectCard({
             marginBottom: '18px',
           }}
         >
-          {project.shortDescription}
+          {project.description}
         </p>
+
+        {/* Technologies List */}
+        <div style={{ marginBottom: '20px' }}>
+          <div
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '10px',
+              color: '#626A73',
+              marginBottom: '6px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+            }}
+          >
+            Technologies:
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '6px',
+            }}
+          >
+            {project.technologies.map((tech) => (
+              <span
+                key={tech}
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '10px',
+                  fontWeight: 500,
+                  color: isActive ? '#5EE6A8' : '#9AA2AA',
+                  backgroundColor: isActive ? '#0D241A' : '#0B0D0F',
+                  border: isActive ? '1px solid #1F4D38' : '1px solid #252A30',
+                  padding: '3px 8px',
+                  borderRadius: '3px',
+                }}
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Action button */}
-      <div>
+      {/* Action buttons */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          paddingTop: '14px',
+          borderTop: '1px solid #1C2128',
+        }}
+      >
         <button
           type="button"
           tabIndex={-1}
           style={{
             fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '10px',
+            fontSize: '11px',
             fontWeight: 600,
             letterSpacing: '0.08em',
-            color: isActive ? '#5EE6A8' : '#626A73',
+            color: isActive ? '#5EE6A8' : '#9AA2AA',
             backgroundColor: 'transparent',
             border: 'none',
             padding: 0,
             cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px',
           }}
         >
-          [ VIEW RECORD ]
+          [ VIEW PROJECT ]
         </button>
+
+        {project.githubUrl && (
+          <a
+            href={project.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '11px',
+              fontWeight: 600,
+              letterSpacing: '0.08em',
+              color: '#5EE6A8',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+          >
+            [ VIEW CODE ]
+            <ExternalLink size={10} />
+          </a>
+        )}
       </div>
     </div>
   );
