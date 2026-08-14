@@ -492,7 +492,7 @@ export function ContactPage() {
         </div>
 
         {/* ── RIGHT COLUMN — Result Panel (Desktop) ── */}
-        <div className="contact-result-desktop" style={{ width: '100%' }}>
+        <div className="contact-result-desktop" style={{ width: '100%', position: 'sticky', top: '90px' }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedCardId}

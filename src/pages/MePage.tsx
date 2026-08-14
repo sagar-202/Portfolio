@@ -299,7 +299,7 @@ export function MePage() {
         </div>
 
         {/* ── RIGHT COLUMN — result panel (desktop) ── */}
-        <div className="me-result-desktop" style={{ width: '100%' }}>
+        <div className="me-result-desktop" style={{ width: '100%', position: 'sticky', top: '90px' }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedCardId}

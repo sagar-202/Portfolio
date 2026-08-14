@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { QueryProvider } from './context/QueryContext';
@@ -115,6 +115,14 @@ function InitScreen() {
 
 // ─── Router Content ───────────────────────────────────────────────────────────
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 /**
  * AppRoutes — rendered inside BrowserRouter + QueryProvider.
  * QueryProvider must be here (not outside BrowserRouter) because
@@ -123,6 +131,7 @@ function InitScreen() {
 function AppRoutes() {
   return (
     <QueryProvider>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/me" element={<MePage />} />

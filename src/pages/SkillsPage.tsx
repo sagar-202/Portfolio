@@ -420,7 +420,7 @@ export function SkillsPage() {
         </div>
 
         {/* ── RIGHT COLUMN — Result Panel (Desktop) ── */}
-        <div className="skills-result-desktop" style={{ width: '100%' }}>
+        <div className="skills-result-desktop" style={{ width: '100%', position: 'sticky', top: '90px' }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedSkillId}

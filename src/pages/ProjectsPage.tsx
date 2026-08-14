@@ -356,7 +356,7 @@ export function ProjectsPage() {
         </div>
 
         {/* ── RIGHT COLUMN — Result Panel (Desktop) ── */}
-        <div className="projects-result-desktop" style={{ width: '100%' }}>
+        <div className="projects-result-desktop" style={{ width: '100%', position: 'sticky', top: '90px' }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedProjectId}
