@@ -431,20 +431,11 @@ export function SkillsPage() {
                   name={selectedSkill.name.toUpperCase()}
                   details={[
                     { label: 'category', value: selectedSkill.category },
-                    {
-                      label: 'proficiency',
-                      value:
-                        selectedSkill.level === 'WORKING'
-                          ? 'Working (● ● ● ● ○)'
-                          : 'Foundational (● ● ● ○ ○)',
-                    },
+                    { label: 'proficiency', value: selectedSkill.level },
                     { label: 'usage', value: selectedSkill.usage.join(' • ') },
                     {
-                      label: 'projects',
-                      value:
-                        selectedSkill.relatedProjects.length > 0
-                          ? `${selectedSkill.relatedProjects.length} projects (${selectedSkill.relatedProjects.slice(0, 2).join(', ')})`
-                          : 'Foundational practice',
+                      label: 'skill index',
+                      value: `${skillsData.length} technologies • Primary: Python, SQL, Pandas • Focus: Data Analytics & AI/ML`,
                     },
                   ]}
                   isExecuting={isExecuting}

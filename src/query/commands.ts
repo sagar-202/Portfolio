@@ -1,7 +1,7 @@
 /**
  * SAGAR.DB Query Engine — Commands
  *
- * Single source of truth for all navigable commands.
+ * Single source of truth for all navigable and terminal commands.
  * No backend. No real SQL. SQL is an interaction metaphor.
  */
 
@@ -13,14 +13,18 @@ export type CommandId =
   | 'CONTACT'
   | 'HELP'
   | 'CLEAR'
-  | 'RESUME';
+  | 'RESUME'
+  | 'GITHUB'
+  | 'LINKEDIN';
 
 export interface Command {
   id: CommandId;
   /** The SQL string displayed in the query area */
   query: string;
-  /** Route to navigate to. null = no navigation (HELP, CLEAR, RESUME) */
+  /** Route to navigate to. null = no route navigation */
   route: string | null;
+  /** External URL to open. null = internal */
+  externalUrl?: string;
   /** Success message shown after execution */
   successMessage: string;
   /** Short description for the help output */
@@ -81,8 +85,24 @@ export const COMMANDS: Record<CommandId, Command> = {
     id: 'RESUME',
     query: 'SELECT resume FROM sagar;',
     route: null,
-    successMessage: '✓ Resume record loaded.',
-    description: 'Open resume (coming soon)',
+    successMessage: '✓ Resume download triggered.',
+    description: 'Download resume PDF',
+  },
+  GITHUB: {
+    id: 'GITHUB',
+    query: 'SELECT github FROM contact;',
+    route: null,
+    externalUrl: 'https://github.com/sagar-202',
+    successMessage: '✓ Redirecting to GitHub profile.',
+    description: 'Open GitHub profile',
+  },
+  LINKEDIN: {
+    id: 'LINKEDIN',
+    query: 'SELECT linkedin FROM contact;',
+    route: null,
+    externalUrl: 'https://linkedin.com/in/sagar-patgar',
+    successMessage: '✓ Redirecting to LinkedIn profile.',
+    description: 'Open LinkedIn profile',
   },
 };
 
@@ -96,7 +116,9 @@ export const HELP_LINES: Array<{ cmd: string; desc: string }> = [
   { cmd: 'projects', desc: 'List all projects' },
   { cmd: 'skills', desc: 'View skills index' },
   { cmd: 'contact', desc: 'Open contact record' },
-  { cmd: 'resume', desc: 'Open resume (coming soon)' },
-  { cmd: 'help', desc: 'Show this help' },
+  { cmd: 'resume', desc: 'Download resume PDF' },
+  { cmd: 'github', desc: 'Open GitHub profile' },
+  { cmd: 'linkedin', desc: 'Open LinkedIn profile' },
+  { cmd: 'help', desc: 'Show available commands' },
   { cmd: 'clear', desc: 'Clear terminal' },
 ];

@@ -1,26 +1,28 @@
 /**
  * MePage — /me
- * Phase 3: Full profile record implementation.
- *
- * Layout mirrors the home page two-column grid.
- * Cards use a local state machine — card selection ≠ page navigation.
- * The global query engine is only used for page-level navigation.
+ * Recruiter-focused profile page.
+ * Includes Profile Snapshot, Work Experience, Verified Certifications,
+ * Interactive Record Cards, and Download Resume CTA.
  */
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence, type Easing } from 'framer-motion';
-import { Download } from 'lucide-react';
+import { Download, Briefcase, Award, GraduationCap, CheckCircle2 } from 'lucide-react';
 
 import { PageShell } from '../components/PageShell';
 import { QueryDisplay } from '../components/QueryDisplay';
 import { QueryExecution } from '../components/QueryExecution';
-
 import { QueryResult } from '../components/QueryResult';
 import { ProfileCard } from '../components/ProfileCard';
 import { useQueryContext } from '../context/QueryContext';
-import { meProfile, profileCards, type CardId } from '../data/profile';
-
-// ─── Motion config ─────────────────────────────────────────────────────────────
+import {
+  meProfile,
+  profileCards,
+  profileSnapshot,
+  experiences,
+  certifications,
+  type CardId,
+} from '../data/profile';
 
 const prefersReducedMotion =
   typeof window !== 'undefined' &&
@@ -39,23 +41,17 @@ const fadeInUp = prefersReducedMotion
 const stagger = (delay: number) =>
   prefersReducedMotion ? {} : { duration: 0.3, ease: EASE_OUT, delay };
 
-// ─── Card execution timing ──────────────────────────────────────────────────
-
 const CARD_EXEC_MS = 260;
 
 type CardExecState = 'idle' | 'executing' | 'ready';
 
-// ─── MePage ───────────────────────────────────────────────────────────────────
-
 export function MePage() {
   const { setActiveCommand } = useQueryContext();
 
-  // Local card state — separate from global navigation query engine
   const [selectedCardId, setSelectedCardId] = useState<CardId>('education');
   const [cardExecState, setCardExecState] = useState<CardExecState>('ready');
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Set global nav active state
   useEffect(() => {
     setActiveCommand('ME');
     return () => {
@@ -85,7 +81,6 @@ export function MePage() {
     [selectedCardId, cardExecState]
   );
 
-  // Derive display values from selected card
   const selectedCard = profileCards.find((c) => c.id === selectedCardId)!;
   const isExecuting = cardExecState === 'executing';
 
@@ -102,8 +97,7 @@ export function MePage() {
       >
         {/* ── LEFT COLUMN ── */}
         <div style={{ minWidth: 0 }}>
-
-          {/* Page-level query */}
+          {/* Query block */}
           <motion.div {...fadeIn} style={{ marginBottom: '4px' }}>
             <QueryDisplay query={meProfile.query} />
           </motion.div>
@@ -119,7 +113,7 @@ export function MePage() {
           {/* Record label */}
           <motion.div
             {...fadeInUp}
-            transition={stagger(0.10)}
+            transition={stagger(0.1)}
             style={{ marginBottom: '16px' }}
           >
             <span
@@ -154,10 +148,10 @@ export function MePage() {
             {meProfile.heading}
           </motion.h1>
 
-          {/* Subtitle + accent tags on one line */}
+          {/* Subtitle + accent tags */}
           <motion.div
             {...fadeInUp}
-            transition={stagger(0.20)}
+            transition={stagger(0.2)}
             style={{
               display: 'flex',
               flexWrap: 'wrap',
@@ -176,10 +170,7 @@ export function MePage() {
             >
               {meProfile.subtitle}
             </span>
-            <span
-              style={{ color: '#252A30', fontSize: '12px' }}
-              aria-hidden="true"
-            >
+            <span style={{ color: '#252A30', fontSize: '12px' }} aria-hidden="true">
               •
             </span>
             <span
@@ -206,19 +197,347 @@ export function MePage() {
               color: '#9AA2AA',
               lineHeight: 1.7,
               margin: 0,
-              marginBottom: '32px',
-              maxWidth: '480px',
+              marginBottom: '28px',
+              maxWidth: '520px',
             }}
           >
             {meProfile.bio}
           </motion.p>
 
-          {/* ── Cards ── */}
+          {/* Action Buttons: Resume Download */}
           <motion.div
             {...fadeInUp}
-            transition={stagger(0.30)}
+            transition={stagger(0.28)}
+            style={{ marginBottom: '36px' }}
+          >
+            <a
+              id="btn-download-resume"
+              href="/resume.pdf"
+              download="Sagar_Patgar_Resume.pdf"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '11px',
+                fontWeight: 600,
+                letterSpacing: '0.1em',
+                padding: '10px 20px',
+                border: '1px solid #5EE6A8',
+                borderRadius: '4px',
+                backgroundColor: '#17382A',
+                color: '#5EE6A8',
+                textDecoration: 'none',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Download size={13} strokeWidth={2} />
+              [ DOWNLOAD RESUME ↓ ]
+            </a>
+          </motion.div>
+
+          {/* ── PROFILE SNAPSHOT ── */}
+          <motion.div
+            {...fadeInUp}
+            transition={stagger(0.32)}
+            style={{
+              backgroundColor: '#111418',
+              border: '1px solid #252A30',
+              borderRadius: '6px',
+              padding: '20px',
+              marginBottom: '36px',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                marginBottom: '16px',
+              }}
+            >
+              <GraduationCap size={14} color="#5EE6A8" />
+              <span
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  letterSpacing: '0.12em',
+                  color: '#5EE6A8',
+                  textTransform: 'uppercase',
+                }}
+              >
+                PROFILE SNAPSHOT
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '14px',
+              }}
+            >
+              <div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: '#626A73', textTransform: 'uppercase', marginBottom: '2px' }}>
+                  EDUCATION
+                </div>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '13px', fontWeight: 600, color: '#F2F4F5' }}>
+                  {profileSnapshot.education}
+                </div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', color: '#5EE6A8' }}>
+                  {profileSnapshot.cgpa}
+                </div>
+              </div>
+
+              <div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: '#626A73', textTransform: 'uppercase', marginBottom: '2px' }}>
+                  PRIMARY FOCUS
+                </div>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '13px', fontWeight: 600, color: '#F2F4F5' }}>
+                  {profileSnapshot.primaryFocus}
+                </div>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '12px', color: '#9AA2AA' }}>
+                  Secondary: {profileSnapshot.secondaryFocus}
+                </div>
+              </div>
+
+              <div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: '#626A73', textTransform: 'uppercase', marginBottom: '2px' }}>
+                  CORE STACK
+                </div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '12px', color: '#5EE6A8' }}>
+                  {profileSnapshot.coreStack}
+                </div>
+              </div>
+
+              <div>
+                <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: '#626A73', textTransform: 'uppercase', marginBottom: '2px' }}>
+                  TARGET ROLES
+                </div>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: '12px', color: '#9AA2AA' }}>
+                  {profileSnapshot.targetRoles}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* ── WORK EXPERIENCE ── */}
+          <motion.div
+            {...fadeInUp}
+            transition={stagger(0.36)}
+            style={{ marginBottom: '36px' }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                marginBottom: '16px',
+              }}
+            >
+              <Briefcase size={14} color="#5EE6A8" />
+              <span
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  letterSpacing: '0.12em',
+                  color: '#5EE6A8',
+                  textTransform: 'uppercase',
+                }}
+              >
+                EXPERIENCE
+              </span>
+            </div>
+
+            {experiences.map((exp) => (
+              <div
+                key={exp.id}
+                style={{
+                  backgroundColor: '#111418',
+                  border: '1px solid #252A30',
+                  borderRadius: '6px',
+                  padding: '20px',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'baseline',
+                    justifyContent: 'space-between',
+                    gap: '8px',
+                    marginBottom: '6px',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '16px',
+                      fontWeight: 700,
+                      color: '#F2F4F5',
+                      margin: 0,
+                    }}
+                  >
+                    {exp.title}
+                  </h3>
+                  <span
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: '11px',
+                      color: '#5EE6A8',
+                    }}
+                  >
+                    {exp.company} • {exp.period}
+                  </span>
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '6px',
+                    marginTop: '12px',
+                  }}
+                >
+                  {exp.highlights.map((item, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '8px',
+                        fontSize: '13px',
+                        fontFamily: "'Inter', sans-serif",
+                        color: '#9AA2AA',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      <CheckCircle2
+                        size={13}
+                        color="#5EE6A8"
+                        style={{ flexShrink: 0, marginTop: '3px' }}
+                      />
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* ── CERTIFICATIONS ── */}
+          <motion.div
+            {...fadeInUp}
+            transition={stagger(0.4)}
+            style={{ marginBottom: '36px' }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                marginBottom: '16px',
+              }}
+            >
+              <Award size={14} color="#5EE6A8" />
+              <span
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  letterSpacing: '0.12em',
+                  color: '#5EE6A8',
+                  textTransform: 'uppercase',
+                }}
+              >
+                CERTIFICATIONS
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+              }}
+            >
+              {certifications.map((cert) => (
+                <div
+                  key={cert.id}
+                  style={{
+                    backgroundColor: '#111418',
+                    border: '1px solid #252A30',
+                    borderRadius: '6px',
+                    padding: '16px 20px',
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '10px',
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        color: '#F2F4F5',
+                      }}
+                    >
+                      {cert.name}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontSize: '11px',
+                        color: '#626A73',
+                        marginTop: '2px',
+                      }}
+                    >
+                      ISSUER: {cert.issuer.toUpperCase()} • YEAR: {cert.year}
+                    </div>
+                  </div>
+
+                  <span
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: '10px',
+                      fontWeight: 600,
+                      color: '#5EE6A8',
+                      backgroundColor: '#17382A',
+                      border: '1px solid #1F4D38',
+                      padding: '4px 10px',
+                      borderRadius: '3px',
+                    }}
+                  >
+                    VERIFIED
+                  </span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* ── Interactive Profile Cards ── */}
+          <motion.div
+            {...fadeInUp}
+            transition={stagger(0.44)}
             style={{ marginBottom: '28px' }}
           >
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '10px',
+                color: '#626A73',
+                textTransform: 'uppercase',
+                letterSpacing: '0.12em',
+                marginBottom: '12px',
+              }}
+            >
+              RECORD INSPECTOR / SELECT FIELD
+            </div>
             <div
               style={{
                 display: 'flex',
@@ -241,7 +560,7 @@ export function MePage() {
             </div>
           </motion.div>
 
-          {/* ── Mobile-only result panel (below cards) ── */}
+          {/* Mobile-only result panel */}
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedCardId + '-mobile'}
@@ -260,41 +579,9 @@ export function MePage() {
               />
             </motion.div>
           </AnimatePresence>
-
-          {/* Resume button */}
-          <motion.div
-            {...fadeInUp}
-            transition={stagger(0.35)}
-            style={{ marginBottom: '36px' }}
-          >
-            <button
-              id="btn-open-resume"
-              type="button"
-              disabled
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '11px',
-                fontWeight: 500,
-                letterSpacing: '0.1em',
-                padding: '9px 16px',
-                border: '1px solid #252A30',
-                borderRadius: '3px',
-                backgroundColor: 'transparent',
-                color: '#626A73',
-                cursor: 'not-allowed',
-              }}
-            >
-              <Download size={12} strokeWidth={1.5} aria-hidden="true" />
-              [ RESUME — COMING SOON ]
-            </button>
-          </motion.div>
-
         </div>
 
-        {/* ── RIGHT COLUMN — result panel (desktop) ── */}
+        {/* ── RIGHT COLUMN — Result panel (desktop) ── */}
         <div className="me-result-desktop" style={{ width: '100%', position: 'sticky', top: '90px' }}>
           <AnimatePresence mode="wait">
             <motion.div
@@ -315,15 +602,12 @@ export function MePage() {
         </div>
       </div>
 
-      {/* Responsive grid + card layout styles */}
       <style>{`
-        /* Desktop: two-column grid, mirror home page */
         @media (min-width: 768px) {
           .me-grid {
             grid-template-columns: minmax(0, 1.3fr) 280px !important;
             gap: 48px !important;
           }
-          /* Hide mobile result panel on desktop */
           .me-result-mobile {
             display: none !important;
           }
@@ -333,13 +617,10 @@ export function MePage() {
             grid-template-columns: minmax(0, 1.4fr) 300px !important;
           }
         }
-
-        /* Mobile: show mobile panel, hide desktop column */
         @media (max-width: 767px) {
           .me-result-desktop {
             display: none !important;
           }
-          /* Cards stack full-width on mobile */
           .profile-cards {
             flex-direction: column !important;
           }

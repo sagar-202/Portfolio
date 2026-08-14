@@ -70,11 +70,27 @@ export function useQuery(): UseQueryReturn {
         return;
       }
 
-      // RESUME — placeholder, no navigate yet
+      // GITHUB / LINKEDIN — external navigation
+      if (command.externalUrl) {
+        setState({ status: 'success', activeCommandId: commandId, errorMessage: null });
+        window.open(command.externalUrl, '_blank', 'noopener,noreferrer');
+        timerRef.current = setTimeout(() => {
+          setState({ status: 'idle', activeCommandId: null, errorMessage: null });
+        }, 1200);
+        return;
+      }
+
+      // RESUME — trigger download
       if (commandId === 'RESUME') {
         setState({ status: 'success', activeCommandId: commandId, errorMessage: null });
+        const a = document.createElement('a');
+        a.href = '/resume.pdf';
+        a.download = 'Sagar_Patgar_Resume.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
         timerRef.current = setTimeout(() => {
-          setState({ status: 'idle', activeCommandId: commandId, errorMessage: null });
+          setState({ status: 'idle', activeCommandId: null, errorMessage: null });
         }, 1200);
         return;
       }

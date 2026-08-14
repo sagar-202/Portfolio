@@ -1,31 +1,22 @@
 /**
  * ProjectsPage — /projects
- * Phase 4: Interactive project records page.
- *
- * Features:
- * - 2-column project grid + right-side Query Result panel (desktop)
- * - Single-column stacked cards + panel below (mobile)
- * - Client-side filter row: [ ALL ], [ DATA ], [ AI / ML ], [ SOFTWARE ], [ TOOLS ]
- * - Sort indicator: SORT: NEWEST
- * - Selected project updates Query Result panel with SQL query and details
- * - 260ms execution transition state on card select
+ * Recruiter-focused portfolio projects page with Featured Projects hierarchy,
+ * interactive detail inspector modal, dynamic category filtering, and compact Project Index.
  */
 
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence, type Easing } from 'framer-motion';
-import { ExternalLink } from 'lucide-react';
+import { Star, Sparkles } from 'lucide-react';
 
 import { PageShell } from '../components/PageShell';
 import { QueryDisplay } from '../components/QueryDisplay';
 import { QueryExecution } from '../components/QueryExecution';
-
 import { QueryResult } from '../components/QueryResult';
 import { ProjectCard } from '../components/ProjectCard';
+import { ProjectDetailModal } from '../components/ProjectDetailModal';
 import { useQueryContext } from '../context/QueryContext';
-import { projectsData, type FilterCategory } from '../data/projects';
+import { projectsData, type FilterCategory, type Project } from '../data/projects';
 import { COMMANDS } from '../query/commands';
-
-// ─── Motion config ─────────────────────────────────────────────────────────────
 
 const prefersReducedMotion =
   typeof window !== 'undefined' &&
@@ -54,6 +45,8 @@ export function ProjectsPage() {
   const [activeFilter, setActiveFilter] = useState<FilterCategory>('ALL');
   const [selectedProjectId, setSelectedProjectId] = useState<string>(projectsData[0].id);
   const [isExecuting, setIsExecuting] = useState<boolean>(false);
+  const [activeModalProject, setActiveModalProject] = useState<Project | null>(null);
+
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Sync with global query engine
@@ -70,7 +63,18 @@ export function ProjectsPage() {
     return projectsData.filter((p) => p.filterCategory === activeFilter);
   }, [activeFilter]);
 
-  // Keep a selected project even when filters change
+  // Split into Featured vs Other projects when ALL is active
+  const { featuredProjects, secondaryProjects } = useMemo(() => {
+    if (activeFilter !== 'ALL') {
+      return { featuredProjects: filteredProjects, secondaryProjects: [] };
+    }
+    return {
+      featuredProjects: filteredProjects.filter((p) => p.isFeatured),
+      secondaryProjects: filteredProjects.filter((p) => !p.isFeatured),
+    };
+  }, [activeFilter, filteredProjects]);
+
+  // Ensure selected project stays valid
   useEffect(() => {
     if (filteredProjects.length > 0) {
       const exists = filteredProjects.some((p) => p.id === selectedProjectId);
@@ -82,22 +86,23 @@ export function ProjectsPage() {
 
   const handleSelectProject = useCallback(
     (id: string) => {
-      if (id === selectedProjectId && !isExecuting) return;
-
-      if (prefersReducedMotion) {
-        setSelectedProjectId(id);
-        return;
-      }
+      const proj = projectsData.find((p) => p.id === id);
+      if (!proj) return;
 
       setSelectedProjectId(id);
-      setIsExecuting(true);
 
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
-        setIsExecuting(false);
-      }, CARD_EXEC_MS);
+      if (!prefersReducedMotion) {
+        setIsExecuting(true);
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => {
+          setIsExecuting(false);
+        }, CARD_EXEC_MS);
+      }
+
+      // Open detail modal when clicking project card
+      setActiveModalProject(proj);
     },
-    [selectedProjectId, isExecuting]
+    []
   );
 
   const selectedProject = useMemo(() => {
@@ -109,6 +114,12 @@ export function ProjectsPage() {
 
   return (
     <PageShell>
+      {/* Project Detail Modal */}
+      <ProjectDetailModal
+        project={activeModalProject}
+        onClose={() => setActiveModalProject(null)}
+      />
+
       <div
         style={{
           display: 'grid',
@@ -118,7 +129,7 @@ export function ProjectsPage() {
         }}
         className="projects-grid"
       >
-        {/* ── LEFT COLUMN ── */}
+        {/* ── LEFT COLUMN (Main Content) ── */}
         <div style={{ minWidth: 0 }}>
           {/* Query block */}
           <motion.div {...fadeIn} style={{ marginBottom: '4px' }}>
@@ -186,10 +197,10 @@ export function ProjectsPage() {
               maxWidth: '560px',
             }}
           >
-            A collection of practical projects across data analytics, AI and software development.
+            A collection of practical projects across data analytics, AI/ML and software development. Click any project to open detailed problem statement, approach, and repository code.
           </motion.p>
 
-          {/* Filter & Sort Bar */}
+          {/* Filter Bar */}
           <motion.div
             {...fadeInUp}
             transition={stagger(0.25)}
@@ -199,7 +210,7 @@ export function ProjectsPage() {
               alignItems: 'center',
               justifyContent: 'space-between',
               gap: '16px',
-              marginBottom: '24px',
+              marginBottom: '28px',
               paddingBottom: '16px',
               borderBottom: '1px solid #252A30',
             }}
@@ -232,13 +243,6 @@ export function ProjectsPage() {
                       transition: 'all 0.15s ease',
                       outline: 'none',
                     }}
-                    onFocus={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.boxShadow =
-                        '0 0 0 2px rgba(94,230,168,0.3)';
-                    }}
-                    onBlur={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.boxShadow = 'none';
-                    }}
                   >
                     [ {filter} ]
                   </button>
@@ -246,7 +250,6 @@ export function ProjectsPage() {
               })}
             </div>
 
-            {/* Sort indicator */}
             <div
               style={{
                 fontFamily: "'JetBrains Mono', monospace",
@@ -256,21 +259,21 @@ export function ProjectsPage() {
                 letterSpacing: '0.08em',
               }}
             >
-              SORT: NEWEST
+              SORT: FEATURED FIRST
             </div>
           </motion.div>
 
-          {/* Project Grid */}
+          {/* Project List Sections */}
           <motion.div
             {...fadeInUp}
             transition={stagger(0.3)}
-            style={{ marginBottom: '32px' }}
+            style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '36px' }}
           >
             {filteredProjects.length === 0 ? (
               <div
                 style={{
                   padding: '32px',
-                  border: '1px border #252A30',
+                  border: '1px solid #252A30',
                   borderRadius: '6px',
                   color: '#626A73',
                   fontFamily: "'JetBrains Mono', monospace",
@@ -278,30 +281,108 @@ export function ProjectsPage() {
                   textAlign: 'center',
                 }}
               >
-                No project records found for current query filter.
+                No project records found for selected query filter.
               </div>
             ) : (
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                  gap: '16px',
-                }}
-              >
-                {filteredProjects.map((project) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={project}
-                    isSelected={selectedProjectId === project.id}
-                    isExecuting={isExecuting && selectedProjectId === project.id}
-                    onSelect={() => handleSelectProject(project.id)}
-                  />
-                ))}
-              </div>
+              <>
+                {/* Featured Projects Section */}
+                <div>
+                  {activeFilter === 'ALL' && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <Star size={12} color="#5EE6A8" fill="#5EE6A8" />
+                      <span
+                        style={{
+                          fontFamily: "'JetBrains Mono', monospace",
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          letterSpacing: '0.14em',
+                          color: '#5EE6A8',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        FEATURED PROJECTS
+                      </span>
+                      <div style={{ flex: 1, height: '1px', backgroundColor: '#1C2128' }} />
+                    </div>
+                  )}
+
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                      gap: '18px',
+                    }}
+                  >
+                    {featuredProjects.map((project) => (
+                      <ProjectCard
+                        key={project.id}
+                        project={project}
+                        isSelected={selectedProjectId === project.id}
+                        isExecuting={isExecuting && selectedProjectId === project.id}
+                        onSelect={() => handleSelectProject(project.id)}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Secondary Projects Section */}
+                {secondaryProjects.length > 0 && (
+                  <div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <Sparkles size={12} color="#9AA2AA" />
+                      <span
+                        style={{
+                          fontFamily: "'JetBrains Mono', monospace",
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          letterSpacing: '0.14em',
+                          color: '#9AA2AA',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        MORE PROJECTS
+                      </span>
+                      <div style={{ flex: 1, height: '1px', backgroundColor: '#1C2128' }} />
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                        gap: '18px',
+                      }}
+                    >
+                      {secondaryProjects.map((project) => (
+                        <ProjectCard
+                          key={project.id}
+                          project={project}
+                          isSelected={selectedProjectId === project.id}
+                          isExecuting={isExecuting && selectedProjectId === project.id}
+                          onSelect={() => handleSelectProject(project.id)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </motion.div>
 
-          {/* Mobile-only Query Result panel (below project cards) */}
+          {/* Mobile Query Result Panel */}
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedProjectId + '-mobile'}
@@ -322,36 +403,13 @@ export function ProjectsPage() {
                     { label: 'tools', value: selectedProject.technologies.join(' • ') },
                   ]}
                   isExecuting={isExecuting}
-                  action={
-                    selectedProject.githubUrl ? (
-                      <a
-                        href={selectedProject.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          fontFamily: "'JetBrains Mono', monospace",
-                          fontSize: '11px',
-                          fontWeight: 500,
-                          color: '#5EE6A8',
-                          textDecoration: 'none',
-                        }}
-                      >
-                        <ExternalLink size={12} />
-                        [ VIEW GITHUB ]
-                      </a>
-                    ) : undefined
-                  }
                 />
               )}
             </motion.div>
           </AnimatePresence>
-
         </div>
 
-        {/* ── RIGHT COLUMN — Result Panel (Desktop) ── */}
+        {/* ── RIGHT COLUMN — PROJECT INDEX Inspector (Desktop) ── */}
         <div className="projects-result-desktop" style={{ width: '100%', position: 'sticky', top: '90px' }}>
           <AnimatePresence mode="wait">
             <motion.div
@@ -367,31 +425,37 @@ export function ProjectsPage() {
                   name={selectedProject.name}
                   details={[
                     { label: 'category', value: selectedProject.category },
-                    { label: 'description', value: selectedProject.description },
-                    { label: 'tools', value: selectedProject.technologies.join(' • ') },
+                    { label: 'summary', value: selectedProject.shortDescription },
+                    { label: 'stack', value: selectedProject.technologies.join(' • ') },
+                    {
+                      label: 'project index',
+                      value: `${projectsData.length} records • Data Analytics • AI/ML • Software`,
+                    },
                   ]}
                   isExecuting={isExecuting}
                   action={
-                    selectedProject.githubUrl ? (
-                      <a
-                        href={selectedProject.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          fontFamily: "'JetBrains Mono', monospace",
-                          fontSize: '11px',
-                          fontWeight: 500,
-                          color: '#5EE6A8',
-                          textDecoration: 'none',
-                        }}
-                      >
-                        <ExternalLink size={12} />
-                        [ VIEW GITHUB ]
-                      </a>
-                    ) : undefined
+                    <button
+                      type="button"
+                      onClick={() => setActiveModalProject(selectedProject)}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        color: '#5EE6A8',
+                        backgroundColor: '#17382A',
+                        border: '1px solid #5EE6A8',
+                        padding: '6px 14px',
+                        borderRadius: '3px',
+                        cursor: 'pointer',
+                        width: '100%',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      [ OPEN FULL PROJECT RECORD → ]
+                    </button>
                   }
                 />
               )}
@@ -400,7 +464,6 @@ export function ProjectsPage() {
         </div>
       </div>
 
-      {/* Responsive layout CSS */}
       <style>{`
         @media (min-width: 768px) {
           .projects-grid {

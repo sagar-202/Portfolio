@@ -1,11 +1,7 @@
 /**
  * SkillCard — Compact Technical Skill Tile for SAGAR.DB.
- *
- * Content-first hierarchy:
- * 1. Skill Name (Level 1)
- * 2. Category & Proficiency dots
- * 3. Short description
- * 4. Project usage count (e.g. "Used in 6 projects")
+ * Recruiter-friendly: Displays name, category, short description,
+ * meaningful proficiency badge (CORE / WORKING / FOUNDATIONAL), and project count.
  */
 
 import type { Skill } from '../data/skills';
@@ -25,13 +21,11 @@ export function SkillCard({
 }: SkillCardProps) {
   const isActive = isSelected && !isExecuting;
 
-  // Determine dot count based on level
-  const levelInfo = {
-    WORKING: { label: 'Working', filled: 4 },
-    FOUNDATIONAL: { label: 'Foundational', filled: 3 },
-    FAMILIAR: { label: 'Familiar', filled: 3 },
-    STRONG: { label: 'Strong', filled: 5 },
-  }[skill.level] || { label: 'Working', filled: 4 };
+  const levelBadge = {
+    CORE: { label: 'CORE SKILL', color: '#5EE6A8', bg: '#17382A', border: '#1F4D38' },
+    WORKING: { label: 'WORKING KNOWLEDGE', color: '#9AA2AA', bg: '#1C2128', border: '#252A30' },
+    FOUNDATIONAL: { label: 'FOUNDATIONAL', color: '#626A73', bg: '#14181D', border: '#1F242A' },
+  }[skill.level] || { label: 'WORKING KNOWLEDGE', color: '#9AA2AA', bg: '#1C2128', border: '#252A30' };
 
   const projectCountText =
     skill.relatedProjects.length > 0
@@ -155,7 +149,7 @@ export function SkillCard({
         </p>
       </div>
 
-      {/* Footer: Proficiency dots + Usage Count */}
+      {/* Footer: Meaningful Proficiency Badge + Usage Count */}
       <div
         style={{
           display: 'flex',
@@ -165,45 +159,23 @@ export function SkillCard({
           borderTop: '1px solid #1C2128',
         }}
       >
-        {/* Proficiency Dots */}
-        <div
+        <span
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '9px',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            color: levelBadge.color,
+            backgroundColor: levelBadge.bg,
+            border: `1px solid ${levelBadge.border}`,
+            padding: '3px 8px',
+            borderRadius: '3px',
+            textTransform: 'uppercase',
           }}
         >
-          <span
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '11px',
-              fontWeight: 500,
-              color: isActive ? '#5EE6A8' : '#9AA2AA',
-            }}
-          >
-            {levelInfo.label}
-          </span>
-          <div
-            style={{ display: 'flex', gap: '3px', alignItems: 'center' }}
-            aria-label={`Proficiency level: ${levelInfo.label}`}
-          >
-            {[1, 2, 3, 4, 5].map((dot) => (
-              <span
-                key={dot}
-                style={{
-                  width: '5px',
-                  height: '5px',
-                  borderRadius: '50%',
-                  backgroundColor:
-                    dot <= levelInfo.filled ? '#5EE6A8' : '#252A30',
-                  display: 'inline-block',
-                }}
-              />
-            ))}
-          </div>
-        </div>
+          {levelBadge.label}
+        </span>
 
-        {/* Project Usage Count */}
         <span
           style={{
             fontFamily: "'JetBrains Mono', monospace",

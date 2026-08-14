@@ -62,6 +62,13 @@ const ALIAS_MAP: Record<string, CommandId> = {
   // RESUME
   resume: 'RESUME',
   cv: 'RESUME',
+
+  // GITHUB
+  github: 'GITHUB',
+  git: 'GITHUB',
+
+  // LINKEDIN
+  linkedin: 'LINKEDIN',
 };
 
 /**

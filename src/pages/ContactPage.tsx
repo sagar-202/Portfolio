@@ -450,6 +450,17 @@ export function ContactPage() {
                   <Mail size={12} />
                   [ COMPOSE EMAIL ]
                 </button>
+                <span
+                  style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: '10px',
+                    color: '#626A73',
+                    display: 'block',
+                    marginTop: '8px',
+                  }}
+                >
+                  * Note: Clicking send opens your default email client with your pre-filled message addressed to sagarpatgar@gmail.com.
+                </span>
               </div>
             </form>
           </motion.div>

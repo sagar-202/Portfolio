@@ -2,8 +2,7 @@
  * SAGAR.DB — Skills Data
  *
  * Single source of truth for all 18 skill records.
- * Realistic usage descriptions and honest proficiency indicators.
- * Project relationships map directly to projects in projects.ts.
+ * Meaningful proficiency levels: CORE | WORKING | FOUNDATIONAL.
  */
 
 export type SkillFilterCategory =
@@ -15,7 +14,7 @@ export type SkillFilterCategory =
   | 'BACKEND'
   | 'TOOLS';
 
-export type ProficiencyLevel = 'WORKING' | 'FOUNDATIONAL' | 'FAMILIAR' | 'STRONG';
+export type ProficiencyLevel = 'CORE' | 'WORKING' | 'FOUNDATIONAL';
 
 export interface Skill {
   id: string;
@@ -32,9 +31,9 @@ export const skillsData: Skill[] = [
   {
     id: 'python',
     name: 'Python',
-    category: 'Programming / Data',
+    category: 'Programming',
     filterCategory: 'PROGRAMMING',
-    level: 'WORKING',
+    level: 'CORE',
     description:
       'Primary language for data analysis, backend development and AI projects.',
     usage: ['Data Analytics', 'Backend', 'AI / ML'],
@@ -52,7 +51,7 @@ export const skillsData: Skill[] = [
     name: 'SQL',
     category: 'Data / Database',
     filterCategory: 'DATA ANALYTICS',
-    level: 'WORKING',
+    level: 'CORE',
     description:
       'Used for querying, data manipulation and backend database workflows.',
     usage: ['Database Querying', 'Data Manipulation', 'Schema Design'],
@@ -67,7 +66,7 @@ export const skillsData: Skill[] = [
     name: 'Pandas',
     category: 'Data Analytics',
     filterCategory: 'DATA ANALYTICS',
-    level: 'WORKING',
+    level: 'CORE',
     description:
       'Primary data manipulation library for processing tabular and time-series datasets.',
     usage: ['Data Cleaning', 'Tabular Analytics', 'Dataset Transformations'],
@@ -140,6 +139,21 @@ export const skillsData: Skill[] = [
     relatedProjects: ['AI Fitness Trainer'],
   },
   {
+    id: 'fastapi',
+    name: 'FastAPI',
+    category: 'Backend / AI',
+    filterCategory: 'BACKEND',
+    level: 'CORE',
+    description:
+      'High-performance modern Python web framework for building asynchronous REST APIs.',
+    usage: ['Async REST APIs', 'AI Service Integration', 'API Endpoints'],
+    relatedProjects: [
+      'QuerySense AI',
+      'AI Job Search & Resume Analyzer',
+      'VibeBank Assistant',
+    ],
+  },
+  {
     id: 'flask',
     name: 'Flask',
     category: 'Backend',
@@ -149,21 +163,6 @@ export const skillsData: Skill[] = [
       'Lightweight Python web framework for building microservices and web APIs.',
     usage: ['Web API Development', 'Lightweight Backends', 'Prototype Servers'],
     relatedProjects: ['AI Fitness Trainer', 'House Rental Management System'],
-  },
-  {
-    id: 'fastapi',
-    name: 'FastAPI',
-    category: 'Backend / AI',
-    filterCategory: 'BACKEND',
-    level: 'WORKING',
-    description:
-      'High-performance modern Python web framework for building asynchronous REST APIs.',
-    usage: ['Async REST APIs', 'AI Service Integration', 'API Endpoints'],
-    relatedProjects: [
-      'QuerySense AI',
-      'AI Job Search & Resume Analyzer',
-      'VibeBank Assistant',
-    ],
   },
   {
     id: 'react',

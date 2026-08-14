@@ -2,41 +2,46 @@
  * SAGAR.DB — Profile Data
  *
  * Single source of truth for all page content.
- * No invented experience, companies, achievements, or projects.
+ * Realistic experience, verified certifications, and education metrics.
  */
-
-// ─── Shared detail-line type ──────────────────────────────────────────────────
 
 export interface DetailLine {
   label: string;
   value: string;
 }
 
-// ─── Profile card definition ──────────────────────────────────────────────────
-
 export type CardId = 'education' | 'focus' | 'targetRoles';
 
 export interface ProfileCard {
   id: CardId;
-  /** Short label shown on the card face */
   label: string;
-  /** One-line summary shown under the label */
   summary: string;
-  /** SQL query shown in the result panel when this card is selected */
   query: string;
-  /** Bold heading in the result panel */
   resultHeading: string;
-  /** Arrow-lines in the result panel */
   resultDetails: DetailLine[];
 }
 
-// ─── Home page data ───────────────────────────────────────────────────────────
+export interface Experience {
+  id: string;
+  title: string;
+  company: string;
+  period: string;
+  highlights: string[];
+}
+
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  year: string;
+  verifyUrl?: string;
+}
 
 export const profile = {
   name: 'Sagar Dayanand Patgar',
   title: 'Computer Science Engineer',
   tags: ['DATA', 'AI', 'SOFTWARE'] as const,
-  bio: 'I build practical applications and data-driven solutions.',
+  bio: 'Computer Science Engineer focused on Data Analytics and AI/ML. I build practical data-driven applications using Python, SQL and modern development tools.',
 
   queries: {
     home: 'SELECT * FROM sagar;',
@@ -47,26 +52,63 @@ export const profile = {
     name: 'Sagar Dayanand Patgar',
     title: 'Computer Science Engineer',
     details: [
+      { label: 'degree', value: 'B.E. Computer Science Engineering (CGPA: 8.77)' },
       { label: 'focus', value: 'Data Analytics' },
       { label: 'exploring', value: 'AI / ML' },
-      { label: 'target roles', value: 'Data Analyst / Software Engineer' },
+      { label: 'target roles', value: 'Data Analyst / Python Developer / Software Engineer' },
     ] as const,
   },
 } as const;
-
-// ─── ME / Profile page data ───────────────────────────────────────────────────
 
 export const meProfile = {
   heading: 'Sagar, in context.',
   subtitle: 'Computer Science Engineer',
   accentLine: 'DATA ANALYTICS • AI / ML',
-  bio: 'I build practical applications and data-driven solutions using Python, SQL and modern development tools.',
+  bio: 'Computer Science Engineer focused on Data Analytics and AI/ML. I build practical data-driven applications using Python, SQL and modern development tools.',
   query: 'SELECT profile FROM sagar;',
   successMessage: '/ 001 row',
   recordLabel: 'RECORD / 001 — PROFILE',
 } as const;
 
-// ─── Profile cards ────────────────────────────────────────────────────────────
+export const profileSnapshot = {
+  education: 'B.E. Computer Science Engineering',
+  cgpa: '8.77 CGPA',
+  institution: 'SDM Institute of Technology (VTU)',
+  primaryFocus: 'Data Analytics',
+  secondaryFocus: 'AI / ML',
+  projectsCount: '6+ Projects',
+  coreStack: 'Python • SQL • Pandas • FastAPI',
+  targetRoles: 'Data Analyst • Python Developer • Software Engineer',
+} as const;
+
+export const experiences: Experience[] = [
+  {
+    id: 'kodnest-internship',
+    title: 'AI / Machine Learning Intern',
+    company: 'KodNest',
+    period: 'Internship',
+    highlights: [
+      'Worked with Python, SQL and structured data analysis workflows.',
+      'Applied data preprocessing, exploratory analysis and visualization techniques.',
+      'Built practical applications using AI-assisted development workflows.',
+    ],
+  },
+];
+
+export const certifications: Certification[] = [
+  {
+    id: 'oci-ai-2025',
+    name: 'Oracle Cloud Infrastructure 2025 Certified AI Foundations Associate',
+    issuer: 'Oracle',
+    year: '2025',
+  },
+  {
+    id: 'oracle-genai-pro',
+    name: 'Oracle Generative AI Professional',
+    issuer: 'Oracle',
+    year: '2025',
+  },
+];
 
 export const profileCards: ProfileCard[] = [
   {
@@ -76,31 +118,33 @@ export const profileCards: ProfileCard[] = [
     query: 'SELECT * FROM education;',
     resultHeading: 'B.E. COMPUTER SCIENCE ENGINEERING',
     resultDetails: [
+      { label: 'cgpa', value: '8.77 CGPA' },
       { label: 'institution', value: 'SDM Institute of Technology' },
       { label: 'university', value: 'Visvesvaraya Technological University' },
-      { label: 'status', value: 'undergraduate engineering' },
+      { label: 'degree', value: 'Undergraduate Engineering' },
     ],
   },
   {
     id: 'focus',
-    label: 'CURRENT FOCUS',
+    label: 'PRIMARY FOCUS',
     summary: 'DATA ANALYTICS • AI / ML',
-    query: "SELECT * FROM skills WHERE focus = 'current';",
+    query: "SELECT * FROM skills WHERE focus = 'primary';",
     resultHeading: 'DATA ANALYTICS • AI / ML',
     resultDetails: [
       { label: 'primary', value: 'Data Analytics' },
-      { label: 'exploring', value: 'AI / ML' },
-      { label: 'tools', value: 'Python • SQL • modern development' },
+      { label: 'secondary', value: 'AI / ML' },
+      { label: 'core stack', value: 'Python • SQL • Pandas • FastAPI' },
     ],
   },
   {
     id: 'targetRoles',
     label: 'TARGET ROLES',
-    summary: 'DATA ANALYST • SOFTWARE ENGINEER',
+    summary: 'DATA ANALYST • PYTHON DEVELOPER',
     query: 'SELECT * FROM career WHERE target = true;',
-    resultHeading: 'DATA ANALYST • SOFTWARE ENGINEER',
+    resultHeading: 'DATA ANALYST • PYTHON DEVELOPER • SOFTWARE ENGINEER',
     resultDetails: [
-      { label: 'preferred', value: 'Data Analytics • AI/ML • Software' },
+      { label: 'roles', value: 'Data Analyst • Python Developer • Software Engineer' },
+      { label: 'domains', value: 'Data Analytics • AI/ML • Web Applications' },
     ],
   },
 ];
