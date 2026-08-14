@@ -1,13 +1,13 @@
 /**
  * SkillsPage — /skills
- * Phase 5: Interactive skill records page.
+ * Phase 7 UI Polish: Technical Skills Showcase
  *
  * Features:
- * - Multi-column skill grid + right-side Query Result panel (desktop)
- * - Single-column stacked cards + panel below (mobile)
- * - Category filter: [ ALL ], [ DATA ], [ AI / ML ], [ PROGRAMMING ], [ FRONTEND ], [ BACKEND ], [ TOOLS ]
- * - Selected skill updates Query Result panel with SQL query, usage and related project relationships
- * - 260ms execution transition state on skill select
+ * - Grouped category grid layout & responsive compact tiles
+ * - Category filters: [ ALL ], [ DATA ANALYTICS ], [ AI / ML ], [ PROGRAMMING ], [ FRONTEND ], [ BACKEND ], [ TOOLS ]
+ * - Main heading: Skills & Technologies
+ * - Subtitle: A practical toolkit I use across data analytics, AI/ML and software development.
+ * - Compact right-side Query Result inspector showing dynamic query + skill overview
  */
 
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
@@ -20,7 +20,7 @@ import { QueryNavigation } from '../components/QueryNavigation';
 import { QueryResult } from '../components/QueryResult';
 import { SkillCard } from '../components/SkillCard';
 import { useQueryContext } from '../context/QueryContext';
-import { skillsData, type SkillFilterCategory } from '../data/skills';
+import { skillsData, type SkillFilterCategory, type Skill } from '../data/skills';
 import { COMMANDS } from '../query/commands';
 
 // ─── Motion config ─────────────────────────────────────────────────────────────
@@ -46,7 +46,16 @@ const CARD_EXEC_MS = 260;
 
 const FILTER_OPTIONS: SkillFilterCategory[] = [
   'ALL',
-  'DATA',
+  'DATA ANALYTICS',
+  'AI / ML',
+  'PROGRAMMING',
+  'FRONTEND',
+  'BACKEND',
+  'TOOLS',
+];
+
+const CATEGORY_ORDER: SkillFilterCategory[] = [
+  'DATA ANALYTICS',
   'AI / ML',
   'PROGRAMMING',
   'FRONTEND',
@@ -76,7 +85,19 @@ export function SkillsPage() {
     return skillsData.filter((s) => s.filterCategory === activeFilter);
   }, [activeFilter]);
 
-  // Keep a valid selected skill when filters change
+  // Grouped skills when ALL is selected
+  const groupedSkills = useMemo(() => {
+    const map = new Map<SkillFilterCategory, Skill[]>();
+    CATEGORY_ORDER.forEach((cat) => map.set(cat, []));
+    filteredSkills.forEach((skill) => {
+      const list = map.get(skill.filterCategory);
+      if (list) list.push(skill);
+      else map.set(skill.filterCategory, [skill]);
+    });
+    return Array.from(map.entries()).filter(([_, list]) => list.length > 0);
+  }, [filteredSkills]);
+
+  // Keep valid selected skill when filter changes
   useEffect(() => {
     if (filteredSkills.length > 0) {
       const exists = filteredSkills.some((s) => s.id === selectedSkillId);
@@ -124,7 +145,7 @@ export function SkillsPage() {
         }}
         className="skills-grid"
       >
-        {/* ── LEFT COLUMN ── */}
+        {/* ── LEFT COLUMN (Main Content) ── */}
         <div style={{ minWidth: 0 }}>
           {/* Query block */}
           <motion.div {...fadeIn} style={{ marginBottom: '4px' }}>
@@ -174,7 +195,7 @@ export function SkillsPage() {
               marginBottom: '14px',
             }}
           >
-            Skills, indexed.
+            Skills & Technologies
           </motion.h1>
 
           {/* Subtitle */}
@@ -192,7 +213,7 @@ export function SkillsPage() {
               maxWidth: '580px',
             }}
           >
-            A practical index of the technologies I use across data analytics, AI/ML and software development.
+            A practical toolkit I use across data analytics, AI/ML and software development.
           </motion.p>
 
           {/* Filter Bar */}
@@ -205,7 +226,7 @@ export function SkillsPage() {
               alignItems: 'center',
               justifyContent: 'space-between',
               gap: '16px',
-              marginBottom: '24px',
+              marginBottom: '32px',
               paddingBottom: '16px',
               borderBottom: '1px solid #252A30',
             }}
@@ -229,7 +250,7 @@ export function SkillsPage() {
                       fontSize: '10px',
                       fontWeight: 600,
                       letterSpacing: '0.08em',
-                      padding: '5px 12px',
+                      padding: '6px 14px',
                       border: isActive ? '1px solid #5EE6A8' : '1px solid #252A30',
                       borderRadius: '3px',
                       backgroundColor: isActive ? '#17382A' : 'transparent',
@@ -266,7 +287,7 @@ export function SkillsPage() {
             </div>
           </motion.div>
 
-          {/* Skill Grid */}
+          {/* Grouped Skills Showcase */}
           <motion.div
             {...fadeInUp}
             transition={stagger(0.3)}
@@ -284,30 +305,76 @@ export function SkillsPage() {
                   textAlign: 'center',
                 }}
               >
-                No skill records found for selected filter category.
+                No skill records found for selected filter.
               </div>
             ) : (
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-                  gap: '14px',
-                }}
-              >
-                {filteredSkills.map((skill) => (
-                  <SkillCard
-                    key={skill.id}
-                    skill={skill}
-                    isSelected={selectedSkillId === skill.id}
-                    isExecuting={isExecuting && selectedSkillId === skill.id}
-                    onSelect={() => handleSelectSkill(skill.id)}
-                  />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '36px' }}>
+                {groupedSkills.map(([categoryName, skillsInGroup]) => (
+                  <div key={categoryName}>
+                    {/* Category Group Header */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontFamily: "'JetBrains Mono', monospace",
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          letterSpacing: '0.14em',
+                          color: '#5EE6A8',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {categoryName}
+                      </span>
+                      <div
+                        style={{
+                          flex: 1,
+                          height: '1px',
+                          backgroundColor: '#1C2128',
+                        }}
+                      />
+                      <span
+                        style={{
+                          fontFamily: "'JetBrains Mono', monospace",
+                          fontSize: '10px',
+                          color: '#626A73',
+                        }}
+                      >
+                        {skillsInGroup.length}
+                      </span>
+                    </div>
+
+                    {/* Skill Tiles Grid */}
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                        gap: '14px',
+                      }}
+                    >
+                      {skillsInGroup.map((skill) => (
+                        <SkillCard
+                          key={skill.id}
+                          skill={skill}
+                          isSelected={selectedSkillId === skill.id}
+                          isExecuting={isExecuting && selectedSkillId === skill.id}
+                          onSelect={() => handleSelectSkill(skill.id)}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
           </motion.div>
 
-          {/* Mobile-only Query Result panel */}
+          {/* Mobile Query Result Panel */}
           <AnimatePresence mode="wait">
             <motion.div
               key={selectedSkillId + '-mobile'}
@@ -324,14 +391,20 @@ export function SkillsPage() {
                   name={selectedSkill.name.toUpperCase()}
                   details={[
                     { label: 'category', value: selectedSkill.category },
-                    { label: 'proficiency', value: selectedSkill.level },
+                    {
+                      label: 'proficiency',
+                      value:
+                        selectedSkill.level === 'WORKING'
+                          ? 'Working (● ● ● ● ○)'
+                          : 'Foundational (● ● ● ○ ○)',
+                    },
                     { label: 'usage', value: selectedSkill.usage.join(' • ') },
                     {
-                      label: 'related projects',
+                      label: 'projects',
                       value:
                         selectedSkill.relatedProjects.length > 0
-                          ? selectedSkill.relatedProjects.join(' • ')
-                          : 'General practice / foundational',
+                          ? `${selectedSkill.relatedProjects.length} projects (${selectedSkill.relatedProjects.slice(0, 2).join(', ')})`
+                          : 'Foundational practice',
                     },
                   ]}
                   isExecuting={isExecuting}
@@ -362,14 +435,20 @@ export function SkillsPage() {
                   name={selectedSkill.name.toUpperCase()}
                   details={[
                     { label: 'category', value: selectedSkill.category },
-                    { label: 'proficiency', value: selectedSkill.level },
+                    {
+                      label: 'proficiency',
+                      value:
+                        selectedSkill.level === 'WORKING'
+                          ? 'Working (● ● ● ● ○)'
+                          : 'Foundational (● ● ● ○ ○)',
+                    },
                     { label: 'usage', value: selectedSkill.usage.join(' • ') },
                     {
-                      label: 'related projects',
+                      label: 'projects',
                       value:
                         selectedSkill.relatedProjects.length > 0
-                          ? selectedSkill.relatedProjects.join(' • ')
-                          : 'General practice / foundational',
+                          ? `${selectedSkill.relatedProjects.length} projects (${selectedSkill.relatedProjects.slice(0, 2).join(', ')})`
+                          : 'Foundational practice',
                     },
                   ]}
                   isExecuting={isExecuting}
@@ -384,7 +463,7 @@ export function SkillsPage() {
       <style>{`
         @media (min-width: 768px) {
           .skills-grid {
-            grid-template-columns: minmax(0, 1.4fr) 300px !important;
+            grid-template-columns: minmax(0, 1.45fr) 290px !important;
             gap: 40px !important;
           }
           .skills-result-mobile {
@@ -393,7 +472,7 @@ export function SkillsPage() {
         }
         @media (min-width: 1024px) {
           .skills-grid {
-            grid-template-columns: minmax(0, 1.5fr) 320px !important;
+            grid-template-columns: minmax(0, 1.55fr) 300px !important;
             gap: 48px !important;
           }
         }

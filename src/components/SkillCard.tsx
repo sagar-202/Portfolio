@@ -1,6 +1,11 @@
 /**
- * SkillCard — SAGAR.DB skill card.
- * Content-first hierarchy with subtle SQL metadata tag.
+ * SkillCard — Compact Technical Skill Tile for SAGAR.DB.
+ *
+ * Content-first hierarchy:
+ * 1. Skill Name (Level 1)
+ * 2. Category & Proficiency dots
+ * 3. Short description
+ * 4. Project usage count (e.g. "Used in 6 projects")
  */
 
 import type { Skill } from '../data/skills';
@@ -19,6 +24,21 @@ export function SkillCard({
   onSelect,
 }: SkillCardProps) {
   const isActive = isSelected && !isExecuting;
+
+  // Determine dot count based on level
+  const levelInfo = {
+    WORKING: { label: 'Working', filled: 4 },
+    FOUNDATIONAL: { label: 'Foundational', filled: 3 },
+    FAMILIAR: { label: 'Familiar', filled: 3 },
+    STRONG: { label: 'Strong', filled: 5 },
+  }[skill.level] || { label: 'Working', filled: 4 };
+
+  const projectCountText =
+    skill.relatedProjects.length > 0
+      ? `Used in ${skill.relatedProjects.length} ${
+          skill.relatedProjects.length === 1 ? 'project' : 'projects'
+        }`
+      : 'Foundational practice';
 
   return (
     <div
@@ -45,13 +65,15 @@ export function SkillCard({
           : '1px solid #252A30',
         borderRadius: '6px',
         backgroundColor: isActive
-          ? '#142E22'
+          ? '#13281E'
           : isExecuting && isSelected
           ? '#0F1F18'
           : '#111418',
         cursor: isExecuting ? 'wait' : 'pointer',
-        transition: 'all 0.18s ease',
+        transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
         outline: 'none',
+        height: '100%',
+        boxSizing: 'border-box',
       }}
       onFocus={(e) => {
         (e.currentTarget as HTMLDivElement).style.boxShadow =
@@ -64,80 +86,56 @@ export function SkillCard({
         if (isSelected) return;
         (e.currentTarget as HTMLDivElement).style.borderColor = '#3D444B';
         (e.currentTarget as HTMLDivElement).style.backgroundColor = '#151A21';
+        (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)';
       }}
       onMouseLeave={(e) => {
         if (isSelected) return;
         (e.currentTarget as HTMLDivElement).style.borderColor = '#252A30';
         (e.currentTarget as HTMLDivElement).style.backgroundColor = '#111418';
+        (e.currentTarget as HTMLDivElement).style.transform = 'none';
       }}
     >
       <div>
-        {/* Subtle SQL Query Tag (Level 4 element) */}
-        <div
-          style={{
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '10px',
-            color: '#626A73',
-            marginBottom: '8px',
-          }}
-        >
-          <span style={{ color: '#3D444B' }}>&gt;</span> SELECT usage FROM {skill.id};
-        </div>
-
-        {/* Skill Name (Level 1 Content) */}
-        <h3
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: '17px',
-            fontWeight: 800,
-            color: '#F2F4F5',
-            margin: 0,
-            marginBottom: '4px',
-            lineHeight: 1.25,
-            textTransform: 'uppercase',
-            letterSpacing: '-0.01em',
-          }}
-        >
-          {skill.name}
-        </h3>
-
-        {/* Category & Proficiency Level */}
+        {/* Header: Skill Name & Category */}
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
+            alignItems: 'baseline',
+            justifyContent: 'space-between',
             gap: '8px',
-            marginBottom: '10px',
+            marginBottom: '4px',
           }}
         >
+          <h3
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '16px',
+              fontWeight: 800,
+              color: '#F2F4F5',
+              margin: 0,
+              textTransform: 'uppercase',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            {skill.name}
+          </h3>
+
           <span
             style={{
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: '10px',
               fontWeight: 600,
-              letterSpacing: '0.1em',
+              letterSpacing: '0.08em',
               color: '#5EE6A8',
               textTransform: 'uppercase',
+              whiteSpace: 'nowrap',
             }}
           >
             {skill.category}
           </span>
-          <span style={{ color: '#252A30', fontSize: '10px' }} aria-hidden="true">
-            •
-          </span>
-          <span
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '10px',
-              fontWeight: 500,
-              color: '#9AA2AA',
-            }}
-          >
-            {skill.level === 'WORKING' ? 'Working' : skill.level === 'FOUNDATIONAL' ? 'Foundational' : 'Familiar'}
-          </span>
         </div>
 
-        {/* Description */}
+        {/* Short Description */}
         <p
           style={{
             fontFamily: "'Inter', sans-serif",
@@ -145,65 +143,73 @@ export function SkillCard({
             fontWeight: 400,
             color: '#9AA2AA',
             margin: 0,
-            lineHeight: 1.55,
-            marginBottom: '14px',
+            lineHeight: 1.5,
+            marginBottom: '16px',
           }}
         >
           {skill.description}
         </p>
-
-        {/* Related projects preview */}
-        {skill.relatedProjects.length > 0 && (
-          <div style={{ marginBottom: '16px' }}>
-            <div
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '10px',
-                color: '#626A73',
-                marginBottom: '4px',
-                textTransform: 'uppercase',
-              }}
-            >
-              Related projects:
-            </div>
-            <div
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: '12px',
-                color: isActive ? '#5EE6A8' : '#626A73',
-                lineHeight: 1.4,
-              }}
-            >
-              {skill.relatedProjects.join(' • ')}
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Action button */}
+      {/* Footer: Proficiency dots + Usage Count */}
       <div
         style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
           paddingTop: '12px',
           borderTop: '1px solid #1C2128',
         }}
       >
-        <button
-          type="button"
-          tabIndex={-1}
+        {/* Proficiency Dots */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '11px',
+              fontWeight: 500,
+              color: isActive ? '#5EE6A8' : '#9AA2AA',
+            }}
+          >
+            {levelInfo.label}
+          </span>
+          <div
+            style={{ display: 'flex', gap: '3px', alignItems: 'center' }}
+            aria-label={`Proficiency level: ${levelInfo.label}`}
+          >
+            {[1, 2, 3, 4, 5].map((dot) => (
+              <span
+                key={dot}
+                style={{
+                  width: '5px',
+                  height: '5px',
+                  borderRadius: '50%',
+                  backgroundColor:
+                    dot <= levelInfo.filled ? '#5EE6A8' : '#252A30',
+                  display: 'inline-block',
+                }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Project Usage Count */}
+        <span
           style={{
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: '10px',
-            fontWeight: 600,
-            letterSpacing: '0.08em',
-            color: isActive ? '#5EE6A8' : '#9AA2AA',
-            backgroundColor: 'transparent',
-            border: 'none',
-            padding: 0,
-            cursor: 'pointer',
+            fontWeight: 500,
+            color: isActive ? '#5EE6A8' : '#626A73',
           }}
         >
-          [ VIEW RECORD ]
-        </button>
+          {projectCountText}
+        </span>
       </div>
     </div>
   );
