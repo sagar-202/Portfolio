@@ -18,7 +18,7 @@ import { ExternalLink } from 'lucide-react';
 import { PageShell } from '../components/PageShell';
 import { QueryDisplay } from '../components/QueryDisplay';
 import { QueryExecution } from '../components/QueryExecution';
-import { QueryNavigation } from '../components/QueryNavigation';
+
 import { QueryResult } from '../components/QueryResult';
 import { ProjectCard } from '../components/ProjectCard';
 import { useQueryContext } from '../context/QueryContext';
@@ -349,10 +349,6 @@ export function ProjectsPage() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Navigation bar */}
-          <motion.div {...fadeInUp} transition={stagger(0.35)}>
-            <QueryNavigation />
-          </motion.div>
         </div>
 
         {/* ── RIGHT COLUMN — Result Panel (Desktop) ── */}

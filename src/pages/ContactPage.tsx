@@ -17,7 +17,7 @@ import { Mail, ExternalLink, Phone, FileText } from 'lucide-react';
 import { PageShell } from '../components/PageShell';
 import { QueryDisplay } from '../components/QueryDisplay';
 import { QueryExecution } from '../components/QueryExecution';
-import { QueryNavigation } from '../components/QueryNavigation';
+
 import { QueryResult } from '../components/QueryResult';
 import { ContactCard } from '../components/ContactCard';
 import { useQueryContext } from '../context/QueryContext';
@@ -485,10 +485,6 @@ export function ContactPage() {
             </button>
           </motion.div>
 
-          {/* Navigation bar */}
-          <motion.div {...fadeInUp} transition={stagger(0.4)}>
-            <QueryNavigation />
-          </motion.div>
         </div>
 
         {/* ── RIGHT COLUMN — Result Panel (Desktop) ── */}

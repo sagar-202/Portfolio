@@ -100,10 +100,12 @@ export function SkillCard({
         <div
           style={{
             display: 'flex',
+            flexWrap: 'wrap',
             alignItems: 'baseline',
             justifyContent: 'space-between',
-            gap: '8px',
-            marginBottom: '4px',
+            gap: '4px 10px',
+            marginBottom: '8px',
+            minWidth: 0,
           }}
         >
           <h3
@@ -115,6 +117,7 @@ export function SkillCard({
               margin: 0,
               textTransform: 'uppercase',
               letterSpacing: '-0.01em',
+              overflowWrap: 'anywhere',
             }}
           >
             {skill.name}
@@ -128,7 +131,8 @@ export function SkillCard({
               letterSpacing: '0.08em',
               color: '#5EE6A8',
               textTransform: 'uppercase',
-              whiteSpace: 'nowrap',
+              overflowWrap: 'break-word',
+              maxWidth: '100%',
             }}
           >
             {skill.category}

@@ -14,7 +14,7 @@ import { Download } from 'lucide-react';
 import { PageShell } from '../components/PageShell';
 import { QueryDisplay } from '../components/QueryDisplay';
 import { QueryExecution } from '../components/QueryExecution';
-import { QueryNavigation } from '../components/QueryNavigation';
+
 import { QueryResult } from '../components/QueryResult';
 import { ProfileCard } from '../components/ProfileCard';
 import { useQueryContext } from '../context/QueryContext';
@@ -292,10 +292,6 @@ export function MePage() {
             </button>
           </motion.div>
 
-          {/* Navigation */}
-          <motion.div {...fadeInUp} transition={stagger(0.40)}>
-            <QueryNavigation />
-          </motion.div>
         </div>
 
         {/* ── RIGHT COLUMN — result panel (desktop) ── */}

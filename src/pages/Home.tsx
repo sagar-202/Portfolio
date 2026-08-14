@@ -9,7 +9,7 @@ import { motion, type Easing } from 'framer-motion';
 import { PageShell } from '../components/PageShell';
 import { QueryDisplay } from '../components/QueryDisplay';
 import { QueryExecution } from '../components/QueryExecution';
-import { QueryNavigation } from '../components/QueryNavigation';
+
 import { QueryResult } from '../components/QueryResult';
 import { profile } from '../data/profile';
 import { useQueryContext } from '../context/QueryContext';
@@ -193,14 +193,6 @@ export function Home() {
             {profile.bio}
           </motion.p>
 
-          {/* Navigation */}
-          <motion.div
-            initial={fadeInUp.initial}
-            animate={fadeInUp.animate}
-            transition={stagger(0.43)}
-          >
-            <QueryNavigation />
-          </motion.div>
         </div>
 
         {/* ── RIGHT COLUMN (panel) ── */}
