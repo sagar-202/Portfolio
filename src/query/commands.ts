@@ -46,7 +46,7 @@ export const COMMANDS: Record<CommandId, Command> = {
     id: 'PROJECTS',
     query: 'SELECT * FROM projects;',
     route: '/projects',
-    successMessage: '✓ Query executed successfully. / 003 rows',
+    successMessage: '✓ Query executed successfully. / 006 rows',
     description: 'List all projects',
   },
   SKILLS: {

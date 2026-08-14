@@ -12,6 +12,8 @@ interface QueryResultProps {
   details?: readonly DetailLine[];
   /** Show executing state in panel header */
   isExecuting?: boolean;
+  /** Optional action element (e.g. Github button) */
+  action?: React.ReactNode;
 }
 
 /**
@@ -25,6 +27,7 @@ export function QueryResult({
   title,
   details,
   isExecuting = false,
+  action,
 }: QueryResultProps) {
   return (
     <aside
@@ -187,6 +190,19 @@ export function QueryResult({
                 </span>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Action element (e.g. View Github button) */}
+        {action && (
+          <div
+            style={{
+              marginTop: '18px',
+              paddingTop: '14px',
+              borderTop: '1px solid #1C2128',
+            }}
+          >
+            {action}
           </div>
         )}
       </div>
