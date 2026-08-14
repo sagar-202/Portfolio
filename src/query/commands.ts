@@ -53,7 +53,7 @@ export const COMMANDS: Record<CommandId, Command> = {
     id: 'SKILLS',
     query: 'SELECT * FROM skills;',
     route: '/skills',
-    successMessage: '✓ Query executed successfully. / 004 categories',
+    successMessage: '✓ Query executed successfully. / 018 rows',
     description: 'View skills index',
   },
   CONTACT: {
