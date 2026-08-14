@@ -1,13 +1,13 @@
 /**
  * SkillsPage — /skills
- * Phase 7 UI Polish: Technical Skills Showcase
+ * Recruiter-friendly Technical Skills Showcase
  *
  * Features:
- * - Grouped category grid layout & responsive compact tiles
- * - Category filters: [ ALL ], [ DATA ANALYTICS ], [ AI / ML ], [ PROGRAMMING ], [ FRONTEND ], [ BACKEND ], [ TOOLS ]
- * - Main heading: Skills & Technologies
+ * - Categories: DATA ANALYTICS, AI / ML, DEVELOPMENT, TOOLS
+ * - Grid layout with section headers
+ * - Heading: SKILLS & TECHNOLOGIES
  * - Subtitle: A practical toolkit I use across data analytics, AI/ML and software development.
- * - Compact right-side Query Result inspector showing dynamic query + skill overview
+ * - Right-side Query Result panel showing dynamic query + compact skill index
  */
 
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
@@ -16,14 +16,11 @@ import { motion, AnimatePresence, type Easing } from 'framer-motion';
 import { PageShell } from '../components/PageShell';
 import { QueryDisplay } from '../components/QueryDisplay';
 import { QueryExecution } from '../components/QueryExecution';
-
 import { QueryResult } from '../components/QueryResult';
 import { SkillCard } from '../components/SkillCard';
 import { useQueryContext } from '../context/QueryContext';
 import { skillsData, type SkillFilterCategory, type Skill } from '../data/skills';
 import { COMMANDS } from '../query/commands';
-
-// ─── Motion config ─────────────────────────────────────────────────────────────
 
 const prefersReducedMotion =
   typeof window !== 'undefined' &&
@@ -48,18 +45,14 @@ const FILTER_OPTIONS: SkillFilterCategory[] = [
   'ALL',
   'DATA ANALYTICS',
   'AI / ML',
-  'PROGRAMMING',
-  'FRONTEND',
-  'BACKEND',
+  'DEVELOPMENT',
   'TOOLS',
 ];
 
 const CATEGORY_ORDER: SkillFilterCategory[] = [
   'DATA ANALYTICS',
   'AI / ML',
-  'PROGRAMMING',
-  'FRONTEND',
-  'BACKEND',
+  'DEVELOPMENT',
   'TOOLS',
 ];
 
@@ -85,7 +78,7 @@ export function SkillsPage() {
     return skillsData.filter((s) => s.filterCategory === activeFilter);
   }, [activeFilter]);
 
-  // Grouped skills when ALL is selected
+  // Grouped skills when ALL is selected or filtered
   const groupedSkills = useMemo(() => {
     const map = new Map<SkillFilterCategory, Skill[]>();
     CATEGORY_ORDER.forEach((cat) => map.set(cat, []));
@@ -259,13 +252,6 @@ export function SkillsPage() {
                       transition: 'all 0.15s ease',
                       outline: 'none',
                     }}
-                    onFocus={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.boxShadow =
-                        '0 0 0 2px rgba(94,230,168,0.3)';
-                    }}
-                    onBlur={(e) => {
-                      (e.currentTarget as HTMLButtonElement).style.boxShadow = 'none';
-                    }}
                   >
                     [ {filter} ]
                   </button>
@@ -273,7 +259,6 @@ export function SkillsPage() {
               })}
             </div>
 
-            {/* Skill count indicator */}
             <div
               style={{
                 fontFamily: "'JetBrains Mono', monospace",
@@ -350,11 +335,11 @@ export function SkillsPage() {
                       </span>
                     </div>
 
-                    {/* Skill Tiles Grid */}
+                    {/* Skill Tiles Grid (3-4 desktop, 2 tablet, 1 mobile) */}
                     <div
                       style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))',
                         gap: '14px',
                       }}
                     >
@@ -391,20 +376,11 @@ export function SkillsPage() {
                   name={selectedSkill.name.toUpperCase()}
                   details={[
                     { label: 'category', value: selectedSkill.category },
-                    {
-                      label: 'proficiency',
-                      value:
-                        selectedSkill.level === 'WORKING'
-                          ? 'Working (● ● ● ● ○)'
-                          : 'Foundational (● ● ● ○ ○)',
-                    },
+                    { label: 'proficiency', value: selectedSkill.level },
                     { label: 'usage', value: selectedSkill.usage.join(' • ') },
                     {
-                      label: 'projects',
-                      value:
-                        selectedSkill.relatedProjects.length > 0
-                          ? `${selectedSkill.relatedProjects.length} projects (${selectedSkill.relatedProjects.slice(0, 2).join(', ')})`
-                          : 'Foundational practice',
+                      label: 'skill index',
+                      value: `${skillsData.length} technologies • Primary: Python, SQL, Pandas • Focus: Data Analytics & AI/ML`,
                     },
                   ]}
                   isExecuting={isExecuting}
@@ -412,7 +388,6 @@ export function SkillsPage() {
               )}
             </motion.div>
           </AnimatePresence>
-
         </div>
 
         {/* ── RIGHT COLUMN — Result Panel (Desktop) ── */}
@@ -446,7 +421,6 @@ export function SkillsPage() {
         </div>
       </div>
 
-      {/* Responsive layout CSS */}
       <style>{`
         @media (min-width: 768px) {
           .skills-grid {

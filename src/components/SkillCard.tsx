@@ -1,7 +1,7 @@
 /**
- * SkillCard — Compact Technical Skill Tile for SAGAR.DB.
- * Recruiter-friendly: Displays name, category, short description,
- * meaningful proficiency badge (CORE / WORKING / FOUNDATIONAL), and project count.
+ * SkillCard — Clean Recruiter-Friendly Technical Skill Card for SAGAR.DB.
+ * Displays Skill Name, Category, 1-2 sentence description, and concise footer tag:
+ * "CORE · Used in X projects" or "WORKING · Used in X projects".
  */
 
 import type { Skill } from '../data/skills';
@@ -21,18 +21,14 @@ export function SkillCard({
 }: SkillCardProps) {
   const isActive = isSelected && !isExecuting;
 
-  const levelBadge = {
-    CORE: { label: 'CORE SKILL', color: '#5EE6A8', bg: '#17382A', border: '#1F4D38' },
-    WORKING: { label: 'WORKING KNOWLEDGE', color: '#9AA2AA', bg: '#1C2128', border: '#252A30' },
-    FOUNDATIONAL: { label: 'FOUNDATIONAL', color: '#626A73', bg: '#14181D', border: '#1F242A' },
-  }[skill.level] || { label: 'WORKING KNOWLEDGE', color: '#9AA2AA', bg: '#1C2128', border: '#252A30' };
-
   const projectCountText =
     skill.relatedProjects.length > 0
       ? `Used in ${skill.relatedProjects.length} ${
           skill.relatedProjects.length === 1 ? 'project' : 'projects'
         }`
       : 'Foundational practice';
+
+  const footerText = `${skill.level} · ${projectCountText}`;
 
   return (
     <div
@@ -149,7 +145,7 @@ export function SkillCard({
         </p>
       </div>
 
-      {/* Footer: Meaningful Proficiency Badge + Usage Count */}
+      {/* Footer: Concise Proficiency + Usage string */}
       <div
         style={{
           display: 'flex',
@@ -162,29 +158,14 @@ export function SkillCard({
         <span
           style={{
             fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '9px',
+            fontSize: '10px',
             fontWeight: 600,
-            letterSpacing: '0.08em',
-            color: levelBadge.color,
-            backgroundColor: levelBadge.bg,
-            border: `1px solid ${levelBadge.border}`,
-            padding: '3px 8px',
-            borderRadius: '3px',
+            letterSpacing: '0.06em',
+            color: skill.level === 'CORE' ? '#5EE6A8' : '#9AA2AA',
             textTransform: 'uppercase',
           }}
         >
-          {levelBadge.label}
-        </span>
-
-        <span
-          style={{
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '10px',
-            fontWeight: 500,
-            color: isActive ? '#5EE6A8' : '#626A73',
-          }}
-        >
-          {projectCountText}
+          {footerText}
         </span>
       </div>
     </div>

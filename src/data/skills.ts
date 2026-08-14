@@ -2,16 +2,15 @@
  * SAGAR.DB — Skills Data
  *
  * Single source of truth for all 18 skill records.
- * Meaningful proficiency levels: CORE | WORKING | FOUNDATIONAL.
+ * Categorized into Data Analytics, AI/ML, Development, and Tools.
+ * Concise proficiency levels: CORE | WORKING | FOUNDATIONAL.
  */
 
 export type SkillFilterCategory =
   | 'ALL'
   | 'DATA ANALYTICS'
   | 'AI / ML'
-  | 'PROGRAMMING'
-  | 'FRONTEND'
-  | 'BACKEND'
+  | 'DEVELOPMENT'
   | 'TOOLS';
 
 export type ProficiencyLevel = 'CORE' | 'WORKING' | 'FOUNDATIONAL';
@@ -31,11 +30,11 @@ export const skillsData: Skill[] = [
   {
     id: 'python',
     name: 'Python',
-    category: 'Programming',
-    filterCategory: 'PROGRAMMING',
+    category: 'Programming / Data',
+    filterCategory: 'DATA ANALYTICS',
     level: 'CORE',
     description:
-      'Primary language for data analysis, backend development and AI projects.',
+      'General-purpose programming language used across my data analysis, backend and AI projects.',
     usage: ['Data Analytics', 'Backend', 'AI / ML'],
     relatedProjects: [
       'UPI Transaction Analysis',
@@ -53,7 +52,7 @@ export const skillsData: Skill[] = [
     filterCategory: 'DATA ANALYTICS',
     level: 'CORE',
     description:
-      'Used for querying, data manipulation and backend database workflows.',
+      'Structured Query Language for data manipulation, database design, and exploratory analysis.',
     usage: ['Database Querying', 'Data Manipulation', 'Schema Design'],
     relatedProjects: [
       'UPI Transaction Analysis',
@@ -68,7 +67,7 @@ export const skillsData: Skill[] = [
     filterCategory: 'DATA ANALYTICS',
     level: 'CORE',
     description:
-      'Primary data manipulation library for processing tabular and time-series datasets.',
+      'Data analysis and manipulation library for cleaning, processing, and aggregating tabular datasets.',
     usage: ['Data Cleaning', 'Tabular Analytics', 'Dataset Transformations'],
     relatedProjects: ['UPI Transaction Analysis'],
   },
@@ -79,7 +78,7 @@ export const skillsData: Skill[] = [
     filterCategory: 'DATA ANALYTICS',
     level: 'WORKING',
     description:
-      'Fundamental package for numerical computing and multi-dimensional array operations.',
+      'Fundamental numerical package for multi-dimensional array processing and mathematical operations.',
     usage: ['Numerical Computation', 'Array Operations', 'Statistical Computations'],
     relatedProjects: ['UPI Transaction Analysis'],
   },
@@ -90,7 +89,7 @@ export const skillsData: Skill[] = [
     filterCategory: 'DATA ANALYTICS',
     level: 'WORKING',
     description:
-      'Comprehensive plotting library for creating static data visualizations and figures.',
+      'Plotting library used for building static charts, trend lines, and exploratory distribution graphs.',
     usage: ['Data Plotting', 'Exploratory Analysis', 'Trend Charts'],
     relatedProjects: ['UPI Transaction Analysis'],
   },
@@ -101,7 +100,7 @@ export const skillsData: Skill[] = [
     filterCategory: 'DATA ANALYTICS',
     level: 'WORKING',
     description:
-      'Statistical data visualization library built on Matplotlib for informative graphics.',
+      'Statistical visualization tool built on Matplotlib for high-level charts and correlation heatmaps.',
     usage: ['Statistical Plots', 'Correlation Maps', 'Data Distribution'],
     relatedProjects: ['UPI Transaction Analysis'],
   },
@@ -110,9 +109,9 @@ export const skillsData: Skill[] = [
     name: 'Scikit-learn',
     category: 'Machine Learning',
     filterCategory: 'AI / ML',
-    level: 'FOUNDATIONAL',
+    level: 'WORKING',
     description:
-      'Machine learning library for predictive modeling, feature engineering and evaluation.',
+      'Machine learning library for predictive modeling, statistical preprocessing, and evaluation metrics.',
     usage: ['Model Prototyping', 'Feature Engineering', 'Predictive Analysis'],
     relatedProjects: [],
   },
@@ -123,7 +122,7 @@ export const skillsData: Skill[] = [
     filterCategory: 'AI / ML',
     level: 'WORKING',
     description:
-      'Real-time computer vision library for image processing and video stream analysis.',
+      'Computer vision library used for video frame processing, image transformations, and stream analysis.',
     usage: ['Video Frame Processing', 'Pose Estimation', 'Image Transformations'],
     relatedProjects: ['AI Fitness Trainer'],
   },
@@ -134,18 +133,18 @@ export const skillsData: Skill[] = [
     filterCategory: 'AI / ML',
     level: 'WORKING',
     description:
-      'Cross-platform framework for building applied computer vision and ML pipelines.',
+      'Applied ML framework used for body landmark detection, pose tracking, and real-time exercise counting.',
     usage: ['Human Pose Estimation', 'Landmark Tracking', 'Repetition Counting'],
     relatedProjects: ['AI Fitness Trainer'],
   },
   {
     id: 'fastapi',
     name: 'FastAPI',
-    category: 'Backend / AI',
-    filterCategory: 'BACKEND',
-    level: 'CORE',
+    category: 'Backend / Web',
+    filterCategory: 'DEVELOPMENT',
+    level: 'WORKING',
     description:
-      'High-performance modern Python web framework for building asynchronous REST APIs.',
+      'Modern, fast Python framework used for constructing REST API endpoints and async LLM services.',
     usage: ['Async REST APIs', 'AI Service Integration', 'API Endpoints'],
     relatedProjects: [
       'QuerySense AI',
@@ -156,55 +155,55 @@ export const skillsData: Skill[] = [
   {
     id: 'flask',
     name: 'Flask',
-    category: 'Backend',
-    filterCategory: 'BACKEND',
+    category: 'Backend / Web',
+    filterCategory: 'DEVELOPMENT',
     level: 'WORKING',
     description:
-      'Lightweight Python web framework for building microservices and web APIs.',
+      'Lightweight Python web framework for structuring web applications, routing, and prototype backends.',
     usage: ['Web API Development', 'Lightweight Backends', 'Prototype Servers'],
     relatedProjects: ['AI Fitness Trainer', 'House Rental Management System'],
   },
   {
     id: 'react',
     name: 'React',
-    category: 'Frontend',
-    filterCategory: 'FRONTEND',
+    category: 'Frontend / Web',
+    filterCategory: 'DEVELOPMENT',
     level: 'WORKING',
     description:
-      'Component-based JavaScript library for building interactive user interfaces.',
+      'Component-driven JavaScript library for building responsive client interfaces and single-page applications.',
     usage: ['Single Page Applications', 'State Management', 'Component Architecture'],
     relatedProjects: ['QuerySense AI', 'AI Job Search & Resume Analyzer'],
   },
   {
     id: 'html',
     name: 'HTML',
-    category: 'Frontend',
-    filterCategory: 'FRONTEND',
+    category: 'Frontend / Web',
+    filterCategory: 'DEVELOPMENT',
     level: 'WORKING',
     description:
-      'Standard markup language for building web page structure and semantic elements.',
+      'Semantic web markup for structuring accessible web document elements and application forms.',
     usage: ['Web Structure', 'Document Architecture', 'Forms'],
     relatedProjects: ['House Rental Management System'],
   },
   {
     id: 'css',
     name: 'CSS',
-    category: 'Frontend',
-    filterCategory: 'FRONTEND',
+    category: 'Frontend / Web',
+    filterCategory: 'DEVELOPMENT',
     level: 'WORKING',
     description:
-      'Style sheet language used for web application presentation, styling and layouts.',
+      'Style sheets for layout positioning, responsive CSS grid systems, and custom theme interfaces.',
     usage: ['Responsive Layouts', 'Custom Styling', 'UI Components'],
     relatedProjects: ['House Rental Management System'],
   },
   {
     id: 'javascript',
     name: 'JavaScript',
-    category: 'Frontend',
-    filterCategory: 'FRONTEND',
+    category: 'Frontend / Web',
+    filterCategory: 'DEVELOPMENT',
     level: 'WORKING',
     description:
-      'Programming language enabling dynamic client-side interactions and web logic.',
+      'Client-side programming language for dynamic DOM handling, event listeners, and API fetching.',
     usage: ['Client Logic', 'DOM Interaction', 'Event Handling'],
     relatedProjects: ['House Rental Management System'],
   },
@@ -215,7 +214,7 @@ export const skillsData: Skill[] = [
     filterCategory: 'TOOLS',
     level: 'WORKING',
     description:
-      'Distributed version control system for tracking source code changes.',
+      'Distributed version control system for code tracking, commit histories, and branch workflows.',
     usage: ['Version Control', 'Branch Workflows', 'Code Management'],
     relatedProjects: [],
   },
@@ -226,18 +225,18 @@ export const skillsData: Skill[] = [
     filterCategory: 'TOOLS',
     level: 'WORKING',
     description:
-      'Cloud repository hosting platform for version control and collaboration.',
+      'Cloud platform for repository management, project documentation, and open source code sharing.',
     usage: ['Repository Hosting', 'Project Tracking', 'Version History'],
     relatedProjects: [],
   },
   {
     id: 'jupyter',
     name: 'Jupyter',
-    category: 'Data / Development',
+    category: 'Data Tools',
     filterCategory: 'TOOLS',
     level: 'WORKING',
     description:
-      'Interactive notebook environment for exploratory data analysis and prototyping.',
+      'Interactive notebook environment for step-by-step data exploration, prototyping, and visualization.',
     usage: ['Data Analysis', 'Python Prototyping', 'Interactive Notebooks'],
     relatedProjects: ['UPI Transaction Analysis'],
   },
