@@ -8,8 +8,10 @@ interface DetailLine {
 interface QueryResultProps {
   query?: string;
   name: string;
-  title: string;
+  title?: string;
   details?: readonly DetailLine[];
+  /** Show executing state in panel header */
+  isExecuting?: boolean;
 }
 
 /**
@@ -22,6 +24,7 @@ export function QueryResult({
   name,
   title,
   details,
+  isExecuting = false,
 }: QueryResultProps) {
   return (
     <aside
@@ -47,13 +50,13 @@ export function QueryResult({
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span
-            className="dot-pulse"
+            className={isExecuting ? undefined : 'dot-pulse'}
             style={{
               display: 'inline-block',
               width: '6px',
               height: '6px',
               borderRadius: '50%',
-              backgroundColor: '#5EE6A8',
+              backgroundColor: isExecuting ? '#626A73' : '#5EE6A8',
               flexShrink: 0,
             }}
             aria-hidden="true"
@@ -124,24 +127,27 @@ export function QueryResult({
               fontWeight: 700,
               color: '#F2F4F5',
               margin: 0,
-              marginBottom: '6px',
+              marginBottom: title ? '6px' : 0,
               lineHeight: 1.35,
+              whiteSpace: 'pre-line',
             }}
           >
             {name}
           </p>
-          <p
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '12px',
-              fontWeight: 400,
-              color: '#9AA2AA',
-              margin: 0,
-              lineHeight: 1.4,
-            }}
-          >
-            {title}
-          </p>
+          {title && (
+            <p
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '12px',
+                fontWeight: 400,
+                color: '#9AA2AA',
+                margin: 0,
+                lineHeight: 1.4,
+              }}
+            >
+              {title}
+            </p>
+          )}
         </div>
 
         {/* Detail lines */}
