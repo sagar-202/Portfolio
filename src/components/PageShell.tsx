@@ -29,7 +29,7 @@ export function PageShell({ children }: PageShellProps) {
           width: '100%',
           maxWidth: '1400px',
           margin: '0 auto',
-          padding: '36px 24px 48px',
+          padding: '36px 24px 96px',
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',

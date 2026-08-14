@@ -270,7 +270,7 @@ export function MePage() {
             <button
               id="btn-open-resume"
               type="button"
-              aria-label="Open resume record"
+              disabled
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -280,29 +280,15 @@ export function MePage() {
                 fontWeight: 500,
                 letterSpacing: '0.1em',
                 padding: '9px 16px',
-                border: '1px solid #5EE6A8',
+                border: '1px solid #252A30',
                 borderRadius: '3px',
                 backgroundColor: 'transparent',
-                color: '#5EE6A8',
-                cursor: 'pointer',
-                transition: 'background-color 0.15s ease',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#17382A';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent';
-              }}
-              onFocus={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.boxShadow =
-                  '0 0 0 2px rgba(94,230,168,0.4)';
-              }}
-              onBlur={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.boxShadow = 'none';
+                color: '#626A73',
+                cursor: 'not-allowed',
               }}
             >
               <Download size={12} strokeWidth={1.5} aria-hidden="true" />
-              [ OPEN RESUME RECORD ]
+              [ RESUME — COMING SOON ]
             </button>
           </motion.div>
 
